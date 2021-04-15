@@ -31,6 +31,7 @@ int main(){
     int fd6[2];
     int fd7[2];
     int fd8[2];
+    int fd9[2];
 
     long long int tamanio = 10;
     char cadena[tamanio];
@@ -41,7 +42,6 @@ int main(){
     bool fin = false;
     int contador = 0;
     bool adelante = false;
-    //string cadenaPalabras[numeroLetras] = {"casa","boli","libro"};
     string* cadenaPalabras = new string[tamanio]{"casa","boli","libro"};
 
     pipe(fd1);
@@ -52,6 +52,7 @@ int main(){
     pipe(fd6);
     pipe(fd7);
     pipe(fd8);
+    pipe(fd9);
 
     pid1 = fork();
 
@@ -72,25 +73,24 @@ int main(){
             exit(1);
 
         case 0: //Nieto
-        cout << GREEN << "NIETO" << RESTORE << endl;
+        //cout << GREEN << "NIETO" << RESTORE << endl;
         //while(1){
-            existe = false;
+          //  existe = false;
             insertar = false;
             fin = false;
 
             close(fd7[1]);
             read(fd7[0],&fin,sizeof(fin));
 
-            cout << "-----------------------------" << fin << endl;
+            //cout << "-----------------------------" << fin << endl;
 
             if(fin == 1){
-              cout << "TE HA MANDADO UN NUMERO" << endl;
-              existe = true;
+            //  cout << "TE HA MANDADO UN NUMERO" << endl;
               close(fd4[0]);
               write(fd4[1],&existe,sizeof(existe));
             }
             else{
-              cout << "TODO BIEN HAS PUESTO UNA LETRA" << endl;
+            //  cout << "TODO BIEN HAS PUESTO UNA LETRA" << endl;
               close(fd2[1]);
               read(fd2[0],&existe,sizeof(existe));
 
@@ -116,7 +116,9 @@ int main(){
               }
 
               for(int contador = 0;contador < tamanio;contador++){
-                cout << GREEN << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE << endl;
+                if(cadenaPalabras[contador] != ""){
+                  cout << GREEN << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE << endl;
+                }
               }
               cout << endl;
 
@@ -124,7 +126,10 @@ int main(){
               write(fd4[1],&existe,sizeof(existe));
             }
 
-            cout << GREEN << "EL NIETO HA REALIZADO LA TERCERA PARTE" << RESTORE << endl;
+            close(fd8[0]);
+            write(fd8[1],&fin,sizeof(fin));
+
+          //  cout << GREEN << "EL NIETO HA REALIZADO LA TERCERA PARTE" << RESTORE << endl;
 
             exit(0);
           //}
@@ -133,16 +138,16 @@ int main(){
 
         default: //Hijo
           //while(1){
-            cout << CYAN << "HIJO" << RESTORE << endl;
+        //    cout << CYAN << "HIJO" << RESTORE << endl;
             fin = false;
 
             close(fd6[1]);
             read(fd6[0],&fin,sizeof(fin));
 
-            cout << "EN EL HIJO FIN ES: " << fin << endl;
+          //  cout << "EN EL HIJO FIN ES: " << fin << endl;
 
             if(fin == 0){
-              cout << "HAS PUESTO UNA PALABRA" << endl;
+          //    cout << "HAS PUESTO UNA PALABRA" << endl;
               close(fd1[1]);
               read(fd1[0],&palabra,sizeof(palabra));
 
@@ -162,9 +167,10 @@ int main(){
                   close(fd3[0]);
                   write(fd3[1],&palabra,sizeof(palabra));
                 }
+
             }
             else{
-              cout << "HAS PUESTO UN NUMERO" << endl;
+          //    cout << "HAS PUESTO UN NUMERO" << endl;
 
             }
             close(fd7[0]);
@@ -190,34 +196,50 @@ int main(){
             }*/
 
           //  cout << CYAN << "AHI TE LO MANDO: " << existe << RESTORE << endl;
-            cout << CYAN << "EL HIJO HA COMPLETADO LA SEGUNDA PARTE" << RESTORE << endl;
+        //    cout << CYAN << "EL HIJO HA COMPLETADO LA SEGUNDA PARTE" << RESTORE << endl;
 
             pid2 = wait(NULL);
 
             close(fd4[1]);
             read(fd4[0],&existe,sizeof(existe));
 
-            cout << "esto es: " << existe << endl;
+            close(fd8[1]);
+            read(fd8[0],&fin,sizeof(fin));
 
-            if(existe == 0){
-              cout << "PALABRAAAAA" << endl;
-              //  cout << CYAN << "AQUI ESTA TU VECTOR" << endl;
-                for(int contador = 0;contador < tamanio;contador++){
-                  if(cadenaPalabras[contador] != ""){
-                    cout << CYAN << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE << endl;
-                  }
+        //    cout << "esto es: " << existe << endl;
+
+        if(fin == 0){
+
+          if(existe == 1){
+        //    cout << "PALABRAAAAA" << endl;
+            //  cout << CYAN << "AQUI ESTA TU VECTOR" << endl;
+              for(int contador = 0;contador < tamanio;contador++){
+                if(cadenaPalabras[contador] != ""){
+                  cout << CYAN << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE << endl;
                 }
-                cout << endl;
+              }
+              cout << endl;
 
-                close(fd5[0]);
-                write(fd5[1],&existe,sizeof(existe));
-                cout << CYAN << "EL HIJO HA REALIZADO LA CUARTA PARTE" << RESTORE << endl;
+              close(fd5[0]);
+              write(fd5[1],&existe,sizeof(existe));
+      //        cout << CYAN << "EL HIJO HA REALIZADO LA CUARTA PARTE" << RESTORE << endl;
+          }
+          else{
+            for(int contador = 0;contador < tamanio;contador++){
+              if(cadenaPalabras[contador] != ""){
+                cout << CYAN << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE << endl;
+              }
             }
-            else{
-              cout << "SEGUIMOS CON LOS NUMERICOS" << endl;
+            cout << endl;
+          }
+        }
+          else{
+        //      cout << "SEGUIMOS CON LOS NUMERICOS" << endl;
               close(fd8[0]);
               write(fd8[1],&fin,sizeof(fin));
             }
+            close(fd9[0]);
+            write(fd9[1],&fin,sizeof(fin));
 
             exit(0);
           //}
@@ -226,7 +248,7 @@ int main(){
     default:
     //while(1){
         sleep(1);
-        cout << YELLOW << "PADRE" << RESTORE << endl;
+      //  cout << YELLOW << "PADRE" << RESTORE << endl;
 
         cout  << YELLOW << "INTRODUCE LA PALABRA QUE DESEAS: " << RESTORE << endl;
 
@@ -236,11 +258,11 @@ int main(){
       for(int contador = 0;contador < tamanio && fin == false;contador++){
 
         if(isdigit(palabra[contador])){
-          cout << "ES UN NUMERO" << endl;
+    //      cout << "ES UN NUMERO" << endl;
           fin = true;
         }
         else{
-          cout << "ES UNA LETRA" << endl;
+    //      cout << "ES UNA LETRA" << endl;
           adelante = true;
         }
 
@@ -252,7 +274,6 @@ int main(){
       }
 
       if(adelante == true){
-        cout << palabra << endl;
         close(fd1[0]);
         write(fd1[1],&palabra,sizeof(palabra));
 
@@ -281,18 +302,18 @@ int main(){
 
       }*/
 
-        cout << YELLOW << "EL PADRE HA REALIZADO LA PRIMERA PARTE" << RESTORE << endl;
+    //    cout << YELLOW << "EL PADRE HA REALIZADO LA PRIMERA PARTE" << RESTORE << endl;
 
         pid1 = wait(NULL);
 
         close(fd5[1]);
         read(fd5[0],&existe,sizeof(existe));
 
-        close(fd8[1]);
-        read(fd8[0],&fin,sizeof(fin));
+        close(fd9[1]);
+        read(fd9[0],&fin,sizeof(fin));
 
         if(fin == 1){
-          cout << "HASTA AQUI HEMOS llegao" << endl;
+          cout << RED << "HASTA AQUI HEMOS llegao" << RESTORE << endl;
         }
         else{
           if(existe == 0){
@@ -316,7 +337,7 @@ int main(){
           cout << endl;
         }
 
-        cout << YELLOW << "EL PADRE HA REALIZADO LA ULTIMA PARTE" << YELLOW << endl;
+    //    cout << YELLOW << "EL PADRE HA REALIZADO LA ULTIMA PARTE" << YELLOW << endl;
 
         exit(0);
       //}
