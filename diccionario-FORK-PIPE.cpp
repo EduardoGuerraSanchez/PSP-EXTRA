@@ -28,11 +28,19 @@ int main(){
     int fd3[2];
     int fd4[2];
     int fd5[2];
+    int fd6[2];
+    int fd7[2];
+    int fd8[2];
 
     long long int tamanio = 10;
     char cadena[tamanio];
     bool existe = false;
     bool insertar = false;
+    char palabra[tamanio];
+
+    bool fin = false;
+    int contador = 0;
+    bool adelante = false;
     //string cadenaPalabras[numeroLetras] = {"casa","boli","libro"};
     string* cadenaPalabras = new string[tamanio]{"casa","boli","libro"};
 
@@ -41,6 +49,9 @@ int main(){
     pipe(fd3);
     pipe(fd4);
     pipe(fd5);
+    pipe(fd6);
+    pipe(fd7);
+    pipe(fd8);
 
     pid1 = fork();
 
@@ -61,44 +72,57 @@ int main(){
             exit(1);
 
         case 0: //Nieto
-        cout << "NIETO" << endl;
+        cout << GREEN << "NIETO" << RESTORE << endl;
         //while(1){
             existe = false;
             insertar = false;
+            fin = false;
 
-            close(fd2[1]);
-            read(fd2[0],&existe,sizeof(existe));
+            close(fd7[1]);
+            read(fd7[0],&fin,sizeof(fin));
 
-            if(existe == 0){
-              close(fd3[1]);
-              read(fd3[0],&cadena,sizeof(cadena));
-              cout << GREEN << "Ma llegao: " << cadena << RESTORE << endl;
+            cout << "-----------------------------" << fin << endl;
 
-            }
-
-            cout << GREEN << "Y ESTO ES: " << existe << RESTORE << endl;
-
-            if(existe == 0){
-              cout << GREEN << "Esta palabra no existe en el vector, vamos a proceder a insertarla..." << RESTORE << endl;
-              for(int contador = 0;contador < tamanio && insertar == false;contador++){
-
-                if(cadenaPalabras[contador] == ""){
-                  cadenaPalabras[contador] = cadena;
-                  cout << GREEN << "insertao: " << cadena << RESTORE << endl;
-                  insertar = true;
-                }
-              }
+            if(fin == 1){
+              cout << "TE HA MANDADO UN NUMERO" << endl;
+              existe = true;
+              close(fd4[0]);
+              write(fd4[1],&existe,sizeof(existe));
             }
             else{
-              cout << GREEN << "Tu palabra ya existia en el vector" << RESTORE << endl;
-            }
+              cout << "TODO BIEN HAS PUESTO UNA LETRA" << endl;
+              close(fd2[1]);
+              read(fd2[0],&existe,sizeof(existe));
 
-            for(int contador = 0;contador < tamanio;contador++){
-              cout << GREEN << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE << endl;
-            }
+              if(existe == 0){
 
-            close(fd4[0]);
-            //write(fd4[1],&cadenaPalabras,sizeof(cadena));
+                close(fd3[1]);
+                read(fd3[0],&palabra,sizeof(palabra));
+              //  cout << GREEN << "Ma llegao: " << cadena << RESTORE << endl;
+
+                cout << GREEN << "Esta palabra no existe en el vector, vamos a proceder a insertarla..."<<RESTORE<< endl;
+
+                for(int contador = 0;contador < tamanio && insertar == false;contador++){
+
+                  if(cadenaPalabras[contador] == ""){
+                    cadenaPalabras[contador] = palabra;
+                    //cout << GREEN << "insertao: " << cadena << RESTORE << endl;
+                    insertar = true;
+                  }
+                }
+              }
+              else{
+                cout << GREEN << "Tu palabra ya existia en el vector" << RESTORE << endl;
+              }
+
+              for(int contador = 0;contador < tamanio;contador++){
+                cout << GREEN << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE << endl;
+              }
+              cout << endl;
+
+              close(fd4[0]);
+              write(fd4[1],&existe,sizeof(existe));
+            }
 
             cout << GREEN << "EL NIETO HA REALIZADO LA TERCERA PARTE" << RESTORE << endl;
 
@@ -109,15 +133,49 @@ int main(){
 
         default: //Hijo
           //while(1){
-            cout << "HIJO" << endl;
+            cout << CYAN << "HIJO" << RESTORE << endl;
+            fin = false;
 
-            close(fd1[1]);
-            read(fd1[0],&cadena,sizeof(cadena));
+            close(fd6[1]);
+            read(fd6[0],&fin,sizeof(fin));
 
-            cout << CYAN << "TU PALABRA ES: "  << cadena << RESTORE << endl;
+            cout << "EN EL HIJO FIN ES: " << fin << endl;
+
+            if(fin == 0){
+              cout << "HAS PUESTO UNA PALABRA" << endl;
+              close(fd1[1]);
+              read(fd1[0],&palabra,sizeof(palabra));
+
+              //  cout << CYAN << "TU PALABRA ES: "  << cadena << RESTORE << endl;
+                for(int contador = 0;contador < tamanio;contador++){
+
+                  if(cadenaPalabras[contador] == palabra){
+
+                    cout << CYAN << "LA PALABRA SE ENCUENTRA EN EL VECTOR" << RESTORE << endl;
+                    existe = true;
+                  }
+                }
+                close(fd2[0]);
+                write(fd2[1],&existe,sizeof(existe));
+
+                if(existe == 0){
+                  close(fd3[0]);
+                  write(fd3[1],&palabra,sizeof(palabra));
+                }
+            }
+            else{
+              cout << "HAS PUESTO UN NUMERO" << endl;
+
+            }
+            close(fd7[0]);
+            write(fd7[1],&fin,sizeof(fin));
+          /*  close(fd1[1]);
+            read(fd1[0],&palabra,sizeof(palabra));
+
+          //  cout << CYAN << "TU PALABRA ES: "  << cadena << RESTORE << endl;
             for(int contador = 0;contador < tamanio;contador++){
 
-              if(cadenaPalabras[contador] == cadena){
+              if(cadenaPalabras[contador] == palabra){
 
                 cout << CYAN << "LA PALABRA SE ENCUENTRA EN EL VECTOR" << RESTORE << endl;
                 existe = true;
@@ -128,25 +186,38 @@ int main(){
 
             if(existe == 0){
               close(fd3[0]);
-              write(fd3[1],&cadena,sizeof(cadena));
-            }
+              write(fd3[1],&palabra,sizeof(palabra));
+            }*/
 
-            cout << CYAN << "AHI TE LO MANDO: " << existe << RESTORE << endl;
+          //  cout << CYAN << "AHI TE LO MANDO: " << existe << RESTORE << endl;
             cout << CYAN << "EL HIJO HA COMPLETADO LA SEGUNDA PARTE" << RESTORE << endl;
 
             pid2 = wait(NULL);
 
             close(fd4[1]);
-          //  read(fd4[0],&cadenaPalabras,sizeof(tamanio));
+            read(fd4[0],&existe,sizeof(existe));
 
-            cout << CYAN << "AQUI ESTA TU VECTOR" << endl;
-            for(int contador = 0;contador < tamanio;contador++){
-              cout << CYAN << cadenaPalabras[contador] << RESTORE << endl;
+            cout << "esto es: " << existe << endl;
+
+            if(existe == 0){
+              cout << "PALABRAAAAA" << endl;
+              //  cout << CYAN << "AQUI ESTA TU VECTOR" << endl;
+                for(int contador = 0;contador < tamanio;contador++){
+                  if(cadenaPalabras[contador] != ""){
+                    cout << CYAN << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE << endl;
+                  }
+                }
+                cout << endl;
+
+                close(fd5[0]);
+                write(fd5[1],&existe,sizeof(existe));
+                cout << CYAN << "EL HIJO HA REALIZADO LA CUARTA PARTE" << RESTORE << endl;
             }
-
-            close(fd5[0]);
-            //write(fd5[1],&cadena,sizeof(cadenaPalabras));
-            cout << CYAN << "EL HIJO HA REALIZADO LA CUARTA PARTE" << RESTORE << endl;
+            else{
+              cout << "SEGUIMOS CON LOS NUMERICOS" << endl;
+              close(fd8[0]);
+              write(fd8[1],&fin,sizeof(fin));
+            }
 
             exit(0);
           //}
@@ -154,25 +225,95 @@ int main(){
 
     default:
     //while(1){
-
         sleep(1);
-        cout << "PADRE" << endl;
+        cout << YELLOW << "PADRE" << RESTORE << endl;
 
-        cout  << YELLOW << "INTRODUCE: " << RESTORE << endl;
-        //cin >> cadena[numeroLetras];
-        cin.getline(cadena,tamanio);
+        cout  << YELLOW << "INTRODUCE LA PALABRA QUE DESEAS: " << RESTORE << endl;
+
+      //cin.getline(cadena,tamanio);
+      cin >> palabra;
+
+      for(int contador = 0;contador < tamanio && fin == false;contador++){
+
+        if(isdigit(palabra[contador])){
+          cout << "ES UN NUMERO" << endl;
+          fin = true;
+        }
+        else{
+          cout << "ES UNA LETRA" << endl;
+          adelante = true;
+        }
+
+      }
+
+      if(fin == true){
+        close(fd6[0]);
+        write(fd6[1],&fin,sizeof(fin));
+      }
+
+      if(adelante == true){
+        cout << palabra << endl;
         close(fd1[0]);
-        write(fd1[1],&cadena,sizeof(cadena));
+        write(fd1[1],&palabra,sizeof(palabra));
+
+        close(fd6[0]);
+        write(fd6[1],&fin,sizeof(fin));
+      }
+
+    /*  while(fin == false){
+
+        if(isalpha(palabra[contador])){
+
+          cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << endl;
+          close(fd6[0]);
+          write(fd6[1],&fin,sizeof(fin));
+        }
+
+        else{
+          cout << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << endl;
+
+          close(fd1[0]);
+          write(fd1[1],&palabra,sizeof(palabra));
+          fin = true;
+
+        }
+        contador++;
+
+      }*/
 
         cout << YELLOW << "EL PADRE HA REALIZADO LA PRIMERA PARTE" << RESTORE << endl;
 
         pid1 = wait(NULL);
 
         close(fd5[1]);
-        //read(fd5[0],&cadena,sizeof(cadenaPalabras));
+        read(fd5[0],&existe,sizeof(existe));
 
-        for(int contador = 0;contador < tamanio; contador++){
-          cout << YELLOW << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE<< endl;
+        close(fd8[1]);
+        read(fd8[0],&fin,sizeof(fin));
+
+        if(fin == 1){
+          cout << "HASTA AQUI HEMOS llegao" << endl;
+        }
+        else{
+          if(existe == 0){
+            cout << RED << "TU PALABRA NO EXISTIA EN EL VECTOR, A SI QUE LA HEMOS AÑADIDO" << RESTORE << endl;
+            cout << endl;
+            for(int contador = 0;contador < tamanio; contador++){
+              if(cadenaPalabras[contador] != ""){
+                cout << RED << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE<< endl;
+              }
+            }
+          }
+          else{
+            cout << GREEN << "TU PALABRA YA EXISTIA EN EL VECTOR, A SI QUE AQUI TIENES " << RESTORE << endl;
+            cout << endl;
+            for(int contador = 0;contador < tamanio; contador++){
+              if(cadenaPalabras[contador] != ""){
+                cout << GREEN << "Posicion [" << contador << "] " << cadenaPalabras[contador] << RESTORE<< endl;
+              }
+            }
+          }
+          cout << endl;
         }
 
         cout << YELLOW << "EL PADRE HA REALIZADO LA ULTIMA PARTE" << YELLOW << endl;
