@@ -1,15 +1,20 @@
-package semaforos;
+package cerrojos;
 
 import java.util.Random;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Buffer {
 
     private char palabras[];
     private Random random;
     private char nuevaLetra;
-    private Semaphore mutex, semProductor, semConsumidor;
     private int bufferCircular;
+    private int i;
+    private Lock lock = new ReentrantLock();
+    private Condition condicionProductor;
+    private Condition condicionConsumidor;
 
     private final String RED = "\033[31m";
     private final String GREEN = "\033[32m";
@@ -18,27 +23,28 @@ public class Buffer {
     public Buffer(int tamanioBuffer) {
 
         palabras = new char[tamanioBuffer];
-        
+
         bufferCircular = 0;
 
+        condicionConsumidor = lock.newCondition();
+        condicionProductor = lock.newCondition();
 
-        for(int contador = 0;contador < palabras.length;contador++){
+        for (int contador = 0; contador < palabras.length; contador++) {
             palabras[contador] = ' ';
         }
 
-
         random = new Random();
-
-        mutex = new Semaphore(1);
-        semProductor = new Semaphore(tamanioBuffer);
-        semConsumidor = new Semaphore(1);
 
     }
 
     public void producir() throws InterruptedException {
 
-        this.semProductor.acquire();
-        this.mutex.acquire();
+        lock.lock();
+        while (i >= palabras.length) {
+            condicionProductor.await();
+        }
+        
+        i = i + 1;
 
         int posicionLibre = 0;
         boolean salir = false;
@@ -49,7 +55,7 @@ public class Buffer {
                 salir = true;
             }
         }
-        
+
         if (bufferCircular == (palabras.length - 1)) {
 
             bufferCircular = 0;
@@ -57,6 +63,8 @@ public class Buffer {
 
             bufferCircular = bufferCircular + 1;
         }
+
+        
 
         nuevaLetra = (char) (random.nextInt(5) + 'a');
 
@@ -73,15 +81,19 @@ public class Buffer {
         }
         System.out.println("");
 
-        this.mutex.release();
-        this.semConsumidor.release();
+        condicionConsumidor.signalAll();
+        lock.unlock();
 
     }
 
     public void consumir() throws InterruptedException {
 
-        semConsumidor.acquire();
-        mutex.acquire();
+        lock.lock();
+        while (i == 0) {
+            condicionConsumidor.await();
+        }
+        
+        i = i - 1;
 
         int posicionOcupada = 0;
         boolean salir = false;
@@ -135,11 +147,10 @@ public class Buffer {
 
                 break;
         }
-
         palabras[posicionOcupada] = ' ';
 
-        this.mutex.release();
-        this.semProductor.release();
+        condicionProductor.signalAll();
+        lock.unlock();
 
     }
 }
