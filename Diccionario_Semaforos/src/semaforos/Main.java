@@ -20,14 +20,14 @@ public class Main {
 //        bufferArrayCompartido.introducirLetras();
 
         for (int contador = 0; contador < tamanioHebraProductora; contador++) {
-            Productor productor = new Productor("La hebra Productora",bufferArrayCompartido,hebrasProductorasInfinitas);
+            Productor productor = new Productor("La hebra Productora",bufferArrayCompartido,hebrasProductorasInfinitas,contador);
             arrayHebrasProductoras.add(productor);
             arrayHebrasProductoras.get(contador).thread.start();
         }
 
         ArrayList<Consumidor> arrayHebrasConsumidor = new ArrayList<Consumidor>();
         for (int contador = 0; contador < tamanioHebraConsumidoras; contador++) {
-            Consumidor consumidor = new Consumidor("La hebra Consumidora", bufferArrayCompartido,hebrasConsumidorasInfinitas);
+            Consumidor consumidor = new Consumidor("La hebra Consumidora", bufferArrayCompartido,hebrasConsumidorasInfinitas,contador);
             arrayHebrasConsumidor.add(consumidor);
             arrayHebrasConsumidor.get(contador).thread.start();
         

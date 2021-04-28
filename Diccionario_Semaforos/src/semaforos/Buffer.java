@@ -7,17 +7,11 @@ import java.util.concurrent.Semaphore;
 
 public class Buffer {
 
-    private char arrayBuffer[];
     private char palabras[];
-    private ArrayList array;
-    private char arrayPalabras[];
-    private String letraAleatoria;
     private Random random;
     private char nuevaLetra;
-    private int i;
-    private int totalLetras;
-    private int turno = 1;
     private Semaphore mutex, semProductor, semConsumidor;
+    private int bufferCircular;
 
     private final String RED = "\033[31m";
     private final String GREEN = "\033[32m";
@@ -25,19 +19,15 @@ public class Buffer {
 
     public Buffer(int tamanioBuffer) {
 
-        arrayBuffer = new char[tamanioBuffer];
         palabras = new char[tamanioBuffer];
+        
+        bufferCircular = 0;
 
-        arrayPalabras = new char[tamanioBuffer];
 
-        array = new ArrayList();
+        for(int contador = 0;contador < palabras.length;contador++){
+            palabras[contador] = ' ';
+        }
 
-//        arrayPalabras[0] = 'a';
-//        arrayPalabras[1] = 'm';
-//        arrayPalabras[2] = 'i';
-//        arrayPalabras[3] = 'g';
-//        arrayPalabras[4] = 'o';
-        letraAleatoria = "abcde";
 
         random = new Random();
 
@@ -45,25 +35,6 @@ public class Buffer {
         semProductor = new Semaphore(tamanioBuffer);
         semConsumidor = new Semaphore(1);
 
-        for (int contador = 0; contador < tamanioBuffer; contador++) {
-
-            arrayBuffer[contador] = 0;
-
-        }
-    }
-
-    public void introducirLetras() {
-
-        boolean salir = false;
-        Scanner sc = new Scanner(System.in);
-
-        for (int contador = 0; contador < palabras.length && salir == false; contador++) {
-            arrayPalabras[contador] = sc.next().charAt(0);
-            if (arrayPalabras[contador] == '-') {
-                salir = true;
-                arrayBuffer[contador] = ' ';
-            }
-        }
     }
 
     public void producir() throws InterruptedException {
@@ -72,13 +43,26 @@ public class Buffer {
         this.mutex.acquire();
 
         int posicionLibre = 0;
+        boolean salir = false;
 
-        if (turno == 1) {
-            nuevaLetra = (char) (random.nextInt(5) + 'a');
-            turno = 0;
+        for (int contador = bufferCircular; contador < palabras.length && salir == false; contador++) {
+            if (palabras[contador] == ' ') {
+                posicionLibre = contador;
+                salir = true;
+            }
+        }
+        
+        if (bufferCircular == (palabras.length - 1)) {
+
+            bufferCircular = 0;
+        } else {
+
+            bufferCircular = bufferCircular + 1;
         }
 
-        palabras[0] = nuevaLetra;
+        nuevaLetra = (char) (random.nextInt(5) + 'a');
+
+        palabras[posicionLibre] = nuevaLetra;
 
         System.out.println("La hebra esta produciendo en la posicion: " + posicionLibre + " del buffer");
 
@@ -100,127 +84,15 @@ public class Buffer {
 
         semConsumidor.acquire();
         mutex.acquire();
+
         int posicionOcupada = 0;
         boolean salir = false;
 
-        switch (palabras[0]) {
-            case 'a':
-
-                if (i == 0) {
-                    palabras[1] = 'm';
-
-                }
-                if (i == 1) {
-                    palabras[2] = 'i';
-
-                }
-                if (i == 2) {
-                    palabras[3] = 'g';
-
-                }
-                if (i == 3) {
-                    palabras[4] = 'o';
-
-                }
-                totalLetras = 5;
-                i++;
-
-                break;
-
-            case 'b':
-
-                if (i == 0) {
-                    palabras[1] = 'a';
-
-                }
-                if (i == 1) {
-                    palabras[2] = 'r';
-
-                }
-                if (i == 2) {
-                    palabras[3] = 'c';
-
-                }
-                if (i == 3) {
-                    palabras[4] = 'o';
-
-                }
-                totalLetras = 5;
-
-                i++;
-
-                break;
-
-            case 'c':
-
-                if (i == 0) {
-                    palabras[1] = 'a';
-
-                }
-                if (i == 1) {
-                    palabras[2] = 's';
-
-                }
-                if (i == 2) {
-                    palabras[3] = 'c';
-
-                }
-                if (i == 3) {
-                    palabras[4] = 'o';
-
-                }
-                totalLetras = 5;
-
-                i++;
-
-                break;
-
-            case 'd':
-                if (i == 0) {
-                    palabras[1] = 'a';
-
-                }
-                if (i == 1) {
-                    palabras[2] = 'r';
-
-                }
-                if (i == 2) {
-                    palabras[3] = 'd';
-
-                }
-                if (i == 3) {
-                    palabras[4] = 'o';
-
-                }
-                totalLetras = 5;
-
-                i++;
-
-                break;
-
-            case 'e':
-
-                if (i == 0) {
-                    palabras[1] = 'r';
-
-                }
-                if (i == 1) {
-                    palabras[2] = 'i';
-
-                }
-                if (i == 2) {
-                    palabras[3] = 'z';
-
-                }
-                if (i == 3) {
-                    palabras[4] = 'o';
-
-                }
-                totalLetras = 5;
-
-                i++;
-
-                break;
+        for (int contador = 0; contador < palabras.length && !salir; contador++) {
+            if (palabras[contador] != ' ') {
+                posicionOcupada = contador;
+                salir = true;
+            }
         }
 
         System.out.println("La hebra esta consumiendo en la posicion: " + posicionOcupada + " del buffer");
@@ -234,14 +106,39 @@ public class Buffer {
         }
         System.out.println("");
 
-        if (i == totalLetras) {//Limpiar el buffer
-            for (int contador = 0; contador < palabras.length; contador++) {
-                palabras[contador] = ' ';
-                arrayPalabras[contador] = ' ';
-            }
-            i = 0;
-            turno = 1;
+        switch (palabras[posicionOcupada]) {
+            case 'a':
+
+                System.out.println(GREEN + "TU PALABRA ES ARBOL" + RESTORE);
+
+                break;
+
+            case 'b':
+
+                System.out.println(GREEN + "TU PALABRA ES BARCO" + RESTORE);
+
+                break;
+
+            case 'c':
+
+                System.out.println(GREEN + "TU PALABRA ES CASCO" + RESTORE);
+
+                break;
+
+            case 'd':
+
+                System.out.println(GREEN + "TU PALABRA ES DARDO" + RESTORE);
+
+                break;
+
+            case 'e':
+
+                System.out.println(GREEN + "TU PALABRA ES ERIZO" + RESTORE);
+
+                break;
         }
+
+        palabras[posicionOcupada] = ' ';
 
         this.mutex.release();
         this.semProductor.release();
