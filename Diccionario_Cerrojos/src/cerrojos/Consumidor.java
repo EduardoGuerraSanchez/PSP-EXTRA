@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package cerrojos;
 
 import java.util.logging.Level;
@@ -13,11 +9,14 @@ public class Consumidor implements Runnable {
     public Thread thr;
     private int contador;
     private Buffer buffer;
+    private int numeroHebra;
 
-    public Consumidor(String nombreHebra, Buffer buffer, int contador) {
+
+    public Consumidor(String nombreHebra, Buffer buffer, int contador,int numero) {
         thr = new Thread(this, nombreHebra);
         this.buffer = buffer;
         this.contador = contador;
+        this.numeroHebra = numero;
     }
 
     @Override
@@ -25,6 +24,7 @@ public class Consumidor implements Runnable {
 
         if (this.contador == 0) {
             try {
+                System.out.println("LA HEBRA CONSUMIDORA NUMERO: " + this.numeroHebra);
                 this.buffer.consumir();
             } catch (InterruptedException ex) {
                 Logger.getLogger(Consumidor.class.getName()).log(Level.SEVERE, null, ex);
@@ -34,6 +34,7 @@ public class Consumidor implements Runnable {
         if (this.contador == 1) {
             try {
                 while (true) {
+                    System.out.println("LA HEBRA CONSUMIDORA NUMERO: " + this.numeroHebra);
                     this.buffer.consumir();
                 }
             } catch (InterruptedException ex) {

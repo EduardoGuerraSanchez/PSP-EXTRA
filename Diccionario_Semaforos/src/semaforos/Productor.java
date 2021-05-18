@@ -38,7 +38,7 @@ public class Productor implements Runnable {
             try {
                 while (true) {
                    // Thread.sleep(10000);
-                    //System.out.println("LA HEBRA PRODUCTORA NUMERO: " + this.numeroHebra);
+                    System.out.println("LA HEBRA PRODUCTORA NUMERO: " + this.numeroHebra);
                     this.buffer.producir();
                 }
             } catch (InterruptedException ex) {

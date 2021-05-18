@@ -35,7 +35,7 @@ public class Consumidor implements Runnable {
                 while (true) {
                    // Thread.sleep(10000);
 
-                    //System.out.println("LA HEBRA CONSUMIDORA NUMERO: " + this.numeroHebra);
+                    System.out.println("LA HEBRA CONSUMIDORA NUMERO: " + this.numeroHebra);
 
                     this.buffer.consumir();
                 }
