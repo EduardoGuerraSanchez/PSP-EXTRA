@@ -72,7 +72,6 @@ public class ThreadServer implements Runnable {
                 System.out.println("EL SERVIDOR HA PROCESADO: " + outputLine);
                 
                 out.println(outputLine);
-
             }
             System.out.println("FINALIZAMOS LA HEBRA DEL SERVIDOR");
             this.socket.close();

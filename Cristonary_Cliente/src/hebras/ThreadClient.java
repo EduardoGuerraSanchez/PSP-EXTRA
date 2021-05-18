@@ -17,7 +17,6 @@ public class ThreadClient implements Runnable {
     private Thread thread;
     private String name;
     private ArrayList arrayWords;
-    private VistaWords vistaWords;
     private VistaLogin vistaLogin;
 
     public ThreadClient(Socket socket) throws IOException {
@@ -33,7 +32,6 @@ public class ThreadClient implements Runnable {
     public void run() {
 
         try {
-            vistaWords = new VistaWords(this.socket);
             vistaLogin = new VistaLogin();
             String inputLine = null;
             String outputLine = null;
@@ -54,22 +52,25 @@ public class ThreadClient implements Runnable {
                     if (inputLine.contains("#WELLCOME")) {
                         vistaLogin.setVisible(false);
 
+                        VistaWords vistaWords = new VistaWords(this.socket);
                         vistaWords.setVisible(true);
 
-                        this.vistaWords.getThread().start();
+                        vistaWords.getThread().start();
 
-//                        a = vistaWords.boton();
-//                        
-//                        out.println(a);
+                        System.out.println("AQUI NO LLEGA");
                     }
 
-                    System.out.println(inputLine);
+                    System.out.println("DASKFJSD: " + inputLine);
+//                    thread.wait();
+                    thread.join();
 
                 }
                 socket.close();
             } catch (IOException ex) {
                 Logger.getLogger(ThreadClient.class.getName()).log(Level.SEVERE, null, ex);
 
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ThreadClient.class.getName()).log(Level.SEVERE, null, ex);
             }
         } catch (IOException ex) {
             Logger.getLogger(ThreadClient.class.getName()).log(Level.SEVERE, null, ex);
