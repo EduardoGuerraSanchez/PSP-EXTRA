@@ -1,5 +1,6 @@
 package vistas;
 
+import hebras.ThreadClient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,27 +9,22 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class VistaWords extends javax.swing.JFrame implements Runnable {
+public class VistaWords extends javax.swing.JFrame {
 
-    Socket socket;
-    Thread thread;
+    private Socket socket;
     private boolean buttonTable;
     private boolean close;
-
-    public VistaWords() {
-        initComponents();
-    }
+    private ThreadClient client;
 
     public VistaWords(Socket socket) {
         initComponents();
+        this.socket = socket;
         this.buttonTable = false;
         this.close = false;
-        this.socket = socket;
-        this.thread = new Thread(this);
     }
 
-    public Thread getThread() {
-        return thread;
+    private VistaWords() {
+        initComponents();
     }
 
     @SuppressWarnings("unchecked")
@@ -139,19 +135,18 @@ public class VistaWords extends javax.swing.JFrame implements Runnable {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonTableWordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTableWordsActionPerformed
-
         this.buttonTable = true;
+        
 
     }//GEN-LAST:event_buttonTableWordsActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        System.out.println("2");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     public String boton() {
 
         String a = "GET_WORD";
-        System.out.println("GET_WORD");
 
         return a;
     }
@@ -200,39 +195,5 @@ public class VistaWords extends javax.swing.JFrame implements Runnable {
     private javax.swing.JTextField textWord;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void run() {
-
-        try {
-            //CON EL OUT MANDO A ESCRIBIR
-            PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
-            //CON EL IN LEO LO QUE ME HAN MANDADO
-            BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            String a = null;
-            String inputLine = null;
-            System.out.println("veamos");
-//            inputLine = in.readLine();
-
-            while ((inputLine = in.readLine()) != null) {
-//            while (this.close == false) {
-                System.out.println("VISTA WORDS");
-
-                System.out.println(this.buttonTable);
-
-                if (this.buttonTable == true) {
-                    a = this.boton();
-//
-                    out.println(a);
-                    System.out.println("ESTO ES: " + a);
-                    System.out.println("MA MANDAO: " + inputLine);
-                }
-            }
-            this.socket.close();
-
-//            }
-        } catch (IOException ex) {
-            Logger.getLogger(VistaWords.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
+    
 }

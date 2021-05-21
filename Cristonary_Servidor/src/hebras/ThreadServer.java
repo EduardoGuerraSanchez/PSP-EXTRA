@@ -13,10 +13,6 @@ import modelo.Word;
 import modelo.Word_ESP;
 import protocolo.Protocol;
 
-/**
- *
- * @author eduar
- */
 public class ThreadServer implements Runnable {
 
     private Socket socket;

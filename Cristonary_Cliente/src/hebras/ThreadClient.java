@@ -13,8 +13,8 @@ import vistas.VistaWords;
 
 public class ThreadClient implements Runnable {
 
-    private Socket socket;
-    private Thread thread;
+    private final Socket socket;
+    private final Thread thread;
     private String name;
     private ArrayList arrayWords;
     private VistaLogin vistaLogin;
@@ -23,7 +23,7 @@ public class ThreadClient implements Runnable {
         this.socket = socket;
         this.thread = new Thread(this);
     }
-
+    
     public Thread getThread() {
         return thread;
     }
@@ -35,42 +35,37 @@ public class ThreadClient implements Runnable {
             vistaLogin = new VistaLogin();
             String inputLine = null;
             String outputLine = null;
-            String aux = null;
             arrayWords = new ArrayList();
-            int contador = 0;
-            boolean entrado = false;
             //CON EL OUT MANDO A ESCRIBIR
             PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
             //CON EL IN LEO LO QUE ME HAN MANDADO
             BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            String a = null;
             try {
                 while ((inputLine = in.readLine()) != null) {
 
                     System.out.println("CLIENTE");
 
                     if (inputLine.contains("#WELLCOME")) {
-                        vistaLogin.setVisible(false);
+                        this.vistaLogin.setVisible(false);
 
                         VistaWords vistaWords = new VistaWords(this.socket);
                         vistaWords.setVisible(true);
 
-                        vistaWords.getThread().start();
+                        out.println("cipollo");
 
                         System.out.println("AQUI NO LLEGA");
                     }
 
-                    System.out.println("DASKFJSD: " + inputLine);
+                    System.out.println(inputLine);
 //                    thread.wait();
-                    thread.join();
+                    this.thread.join();
+                    
 
                 }
                 socket.close();
-            } catch (IOException ex) {
+            } catch (IOException | InterruptedException ex) {
                 Logger.getLogger(ThreadClient.class.getName()).log(Level.SEVERE, null, ex);
 
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ThreadClient.class.getName()).log(Level.SEVERE, null, ex);
             }
         } catch (IOException ex) {
             Logger.getLogger(ThreadClient.class.getName()).log(Level.SEVERE, null, ex);
