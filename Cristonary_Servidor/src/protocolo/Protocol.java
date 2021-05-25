@@ -11,10 +11,8 @@ public class Protocol {
     private final char SIGN = '#';
     private final String PROTOCOL = "PROTOCOLOCRISTONARY1.0";
     private final String LOGIN = "LOGIN";
-    private final String AVAIBLE = "AVAIBLE_WORDS";
-    private final String WELLCOME = "WELLCOME";
-    private final String ERROR = "ERROR";
     private final String GET_WORD = "GET_WORD";
+    private final String SPECIFIC = "SPECIFIC";
     private ProtocolController protocolController;
 
     public String processInput(String theInput) throws SQLException {
@@ -35,6 +33,10 @@ public class Protocol {
         if (theInput.contains(GET_WORD)) {
             theOutput = this.getWords_ESP();
             theOutput = "PROTOCOLOCRISTONARY1.0#AVAIBLE_WORDS#" + theOutput;
+        }
+        
+        if(theInput.contains("MIS_GORDOS")){
+            theOutput = "EL CLIENTE ME HA DECIO MIS_GORDOS";
         }
 
         return theOutput;

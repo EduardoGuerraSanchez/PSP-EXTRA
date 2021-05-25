@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public class VistaLogin extends javax.swing.JFrame {
 
-    private final String IP = "192.168.43.51";
+    private final String IP = "192.168.0.13";
     private int port = 4444;
     private Socket socket;
     private PrintWriter out;
@@ -38,7 +38,7 @@ public class VistaLogin extends javax.swing.JFrame {
         }
     }
 
-    private void sendMessage() {
+    public void sendMessage() {
 
         try {
 
@@ -46,7 +46,6 @@ public class VistaLogin extends javax.swing.JFrame {
             //Capto lo que contiene el out para enviarlo
 //            this.out.println(PROTOCOLO + SIGNO + LOGIN + SIGNO + textLogin.getText() + SIGNO + textPassword.getText());
             this.out.println(PROTOCOLO + SIGNO + LOGIN + SIGNO + "edeuve" + SIGNO + "edeuve");
-
 
             ThreadClient threadClient = new ThreadClient(this.socket);
             threadClient.getThread().start();

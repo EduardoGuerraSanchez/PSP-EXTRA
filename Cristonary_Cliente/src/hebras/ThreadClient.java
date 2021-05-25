@@ -18,12 +18,14 @@ public class ThreadClient implements Runnable {
     private String name;
     private ArrayList arrayWords;
     private VistaLogin vistaLogin;
+    private PrintWriter out;
+    private BufferedReader in;
 
     public ThreadClient(Socket socket) throws IOException {
         this.socket = socket;
         this.thread = new Thread(this);
     }
-    
+
     public Thread getThread() {
         return thread;
     }
@@ -33,13 +35,14 @@ public class ThreadClient implements Runnable {
 
         try {
             vistaLogin = new VistaLogin();
+
             String inputLine = null;
             String outputLine = null;
             arrayWords = new ArrayList();
             //CON EL OUT MANDO A ESCRIBIR
-            PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
+            this.out = new PrintWriter(this.socket.getOutputStream(), true);
             //CON EL IN LEO LO QUE ME HAN MANDADO
-            BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             try {
                 while ((inputLine = in.readLine()) != null) {
 
@@ -47,23 +50,23 @@ public class ThreadClient implements Runnable {
 
                     if (inputLine.contains("#WELLCOME")) {
                         this.vistaLogin.setVisible(false);
-
-                        VistaWords vistaWords = new VistaWords(this.socket);
-                        vistaWords.setVisible(true);
-
-                        out.println("cipollo");
-
-                        System.out.println("AQUI NO LLEGA");
+                        
+                        this.out.println("#GET_WORD");
                     }
-
-                    System.out.println(inputLine);
-//                    thread.wait();
-                    this.thread.join();
                     
+                    if(inputLine.contains("#AVAIBLE")){
+                        VistaWords vistaWords = new VistaWords(this.socket,inputLine);
+
+                        vistaWords.setVisible(true);
+                    }
+                    
+                    System.out.println("SI VES ESTO ES PORQUE NO HA ENTRADO EN NINGUN IF: " + inputLine);
+//                    thread.wait();
+//                    this.thread.join();
 
                 }
                 socket.close();
-            } catch (IOException | InterruptedException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(ThreadClient.class.getName()).log(Level.SEVERE, null, ex);
 
             }

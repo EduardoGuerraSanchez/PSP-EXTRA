@@ -119,7 +119,6 @@ public class VistaServer extends javax.swing.JFrame {
 
         listening = true;
 
-        //Captamos el puerto del socket
         try (ServerSocket serverSocket = new ServerSocket(this.getPort())) {
 
             while (listening) {
