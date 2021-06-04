@@ -9,7 +9,7 @@ public class Word_ESP extends Word{
     
     private String word_ESP;
     private String definition_ESP;
-    private int cod_palabra;
+    private String cod_palabra;
     private ArrayList arrayWord_ESP;
     
     public Word_ESP() {
@@ -32,11 +32,11 @@ public class Word_ESP extends Word{
         this.definition_ESP = definition_ESP;
     }
 
-    public int getCod_palabra() {
+    public String getCod_palabra() {
         return cod_palabra;
     }
 
-    public void setCod_palabra(int cod_palabra) {
+    public void setCod_palabra(String cod_palabra) {
         this.cod_palabra = cod_palabra;
     }
     
@@ -60,9 +60,9 @@ public class Word_ESP extends Word{
 
                 Word_ESP word_ESP = new Word_ESP();
                 
-                word_ESP.setWord_ESP(rs.getString("palabra_esp"));
-                word_ESP.setDefinition_ESP(rs.getString("definicion_esp"));
-                word_ESP.setCod_palabra(rs.getInt("cod_palabra"));
+                word_ESP.setWord_ESP(rs.getString("word_esp"));
+                word_ESP.setDefinition_ESP(rs.getString("description_esp"));
+                word_ESP.setCod_palabra(rs.getString("cod_word"));
                 
 
                 this.arrayWord_ESP.add(word_ESP);
@@ -78,21 +78,6 @@ public class Word_ESP extends Word{
 
         return arrayWord_ESP;
     }
-    
-    
-    
-//    public static void main(String[] args) throws SQLException {
-//        Word_ESP word_ESP = new Word_ESP();
-//        
-//        ArrayList<Word_ESP> array = new ArrayList<Word_ESP>();
-//        
-//        array = word_ESP.getWord_ESP_BD();
-//        
-//        for(int contador = 0;contador < array.size();contador++){
-//            System.out.println(array.get(contador).getDefinition_ESP());
-//        }
-//        
-//    }
 
     @Override
     public String toString() {

@@ -1,5 +1,6 @@
 package modelo;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,7 +13,7 @@ public class Usuario extends ConexionBD{
     private String password;
     private ArrayList arrayUsuario;
 
-    public Usuario() {
+    public Usuario() throws IOException {
         arrayUsuario = new ArrayList();
     }
     
@@ -40,7 +41,7 @@ public class Usuario extends ConexionBD{
         this.password = password;
     }
     
-    public ArrayList getUserBD() throws SQLException {
+    public ArrayList getUserBD() throws SQLException, IOException {
 
         this.abrirConexion();
         

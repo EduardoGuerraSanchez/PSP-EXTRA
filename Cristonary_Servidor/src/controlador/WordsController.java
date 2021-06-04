@@ -1,5 +1,6 @@
 package controlador;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import modelo.Word;
@@ -20,7 +21,7 @@ public class WordsController {
         this.arrayWordsController = arrayWordsController;
     }
     
-    public ArrayList<Word> getTableWords() throws SQLException{
+    public ArrayList<Word> getTableWords() throws SQLException, IOException{
         
         Word word = new Word();
         

@@ -52,7 +52,7 @@ public class ThreadServer implements Runnable {
         try {
             String inputLine, outputLine;
 
-            protocol = new Protocol();
+            protocol = new Protocol(this.socket);
             PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             ArrayList<Word_ESP> array = new ArrayList<Word_ESP>();

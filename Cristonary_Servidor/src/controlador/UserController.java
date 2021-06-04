@@ -1,5 +1,6 @@
 package controlador;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import modelo.Usuario;
@@ -20,7 +21,7 @@ public class UserController {
         this.arrayControllerUsers = arrayControllerUsers;
     }
     
-    public ArrayList<Usuario> getTableUsers() throws SQLException{
+    public ArrayList<Usuario> getTableUsers() throws SQLException, IOException{
         
         Usuario usuario = new Usuario();
         
