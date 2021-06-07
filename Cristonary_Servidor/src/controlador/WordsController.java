@@ -29,6 +29,4 @@ public class WordsController {
 
         return this.arrayWordsController;
     }
-    
-    
 }

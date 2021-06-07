@@ -5,7 +5,6 @@ import map.Word_ESP;
 
 public class VistaWordsController {
 
-    private String words[];
     private final String mensaje;
     private ArrayList<Word_ESP> arrayWord_esp;
     private final ArrayList arrayAux;

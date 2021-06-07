@@ -1,10 +1,9 @@
 package vista;
 
+import hebras.ListenerThread;
 import hebras.ThreadServer;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,12 +15,20 @@ import java.util.logging.Logger;
 public class VistaServer extends javax.swing.JFrame {
 
     private int port = 4444;
-    private ArrayList arrayThread;
-    private boolean listening = false;
+    ArrayList<ThreadServer> arrayThread;
+    ServerSocket serverSocket;
+    private ListenerThread listenerThread;
+    
 
     public VistaServer() {
-        initComponents();
-        arrayThread = new ArrayList();
+        try {
+            initComponents();
+            this.serverSocket = new ServerSocket(this.port);
+            this.arrayThread = new ArrayList();
+            System.out.println("HEMOS CREADO LA VISTA");
+        } catch (IOException ex) {
+            Logger.getLogger(VistaServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public int getPort() {
@@ -31,7 +38,6 @@ public class VistaServer extends javax.swing.JFrame {
     public void setPort(int port) {
         this.port = port;
     }
-
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -54,6 +60,11 @@ public class VistaServer extends javax.swing.JFrame {
         });
 
         jRadioButton2.setText("Off");
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("IP");
 
@@ -103,29 +114,36 @@ public class VistaServer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonONActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonONActionPerformed
-        try {
-            openServer();
-        } catch (IOException ex) {
-            Logger.getLogger(VistaServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+//        try {
+//            openServer();
+//        } catch (IOException ex) {
+//            Logger.getLogger(VistaServer.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        
+        this.listenerThread = new ListenerThread(this.serverSocket,true,this,arrayThread);
+        this.listenerThread.listener.start();
     }//GEN-LAST:event_buttonONActionPerformed
 
-    public void openServer() throws IOException {
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+        this.listenerThread.closeServer();
+        System.exit(0);
+    }//GEN-LAST:event_jRadioButton2ActionPerformed
 
-        listening = true;
-
-        try (ServerSocket serverSocket = new ServerSocket(this.getPort())) {
-
-            while (listening) {
-                ThreadServer threadServer = new ThreadServer(serverSocket.accept(), String.valueOf(this.arrayThread.size()));
-
-                this.arrayThread.add(threadServer);
-                threadServer.getThread().start();
-                                
-            }
-        }
-
-    }
+//    public void openServer() throws IOException {
+//
+//        listening = true;
+//
+//        try (ServerSocket serverSocket = new ServerSocket(this.getPort())) {
+//
+//            while (listening) {
+//                ThreadServer threadServer = new ThreadServer(serverSocket.accept(), String.valueOf(this.arrayThread.size()),this.arrayThread);
+//
+//                this.arrayThread.add(threadServer);
+//                threadServer.getThread().start();
+//            }
+//        }
+//    }
     
     /**
      * @param args the command line arguments

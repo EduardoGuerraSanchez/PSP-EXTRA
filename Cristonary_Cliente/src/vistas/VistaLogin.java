@@ -44,8 +44,8 @@ public class VistaLogin extends javax.swing.JFrame {
 
             this.out = new PrintWriter(this.socket.getOutputStream(), true);
             //Capto lo que contiene el out para enviarlo
-//            this.out.println(PROTOCOLO + SIGNO + LOGIN + SIGNO + textLogin.getText() + SIGNO + textPassword.getText());
-            this.out.println(PROTOCOLO + SIGNO + LOGIN + SIGNO + "edeuve" + SIGNO + "edeuve");
+            this.out.println(PROTOCOLO + SIGNO + LOGIN + SIGNO + textLogin.getText() + SIGNO + textPassword.getText());
+//            this.out.println(PROTOCOLO + SIGNO + LOGIN + SIGNO + "edeuve" + SIGNO + "edeuve");
 
             ThreadClient threadClient = new ThreadClient(this.socket);
             threadClient.getThread().start();

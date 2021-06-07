@@ -21,17 +21,11 @@ public class VistaWords extends javax.swing.JFrame {
     private ArrayList<Word_ESP> word_ESP;
     private String words[];
     private String tabla[][];
-    private boolean buttonTable;
-    private boolean close;
-    private ThreadClient client;
     private PrintWriter out;
-    private BufferedReader in;
 
     public VistaWords(Socket socket, String mensaje, String login, String token) throws IOException {
         initComponents();
         this.socket = socket;
-        this.buttonTable = false;
-        this.close = false;
         this.mensaje = mensaje;
         this.word_ESP = loadArray();
         this.login = login;
@@ -40,9 +34,6 @@ public class VistaWords extends javax.swing.JFrame {
         System.out.println(this.mensaje);
 
         this.out = new PrintWriter(this.socket.getOutputStream(), true);
-        this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-
-//        showTableWords();
 
         VistaWordsController vistaWordsController = new VistaWordsController(this.mensaje,this.word_ESP);
         this.tabla = vistaWordsController.showTable();
@@ -60,13 +51,11 @@ public class VistaWords extends javax.swing.JFrame {
         jFrame1 = new javax.swing.JFrame();
         jDialog1 = new javax.swing.JDialog();
         jDialog2 = new javax.swing.JDialog();
-        textWord = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        buttonTableWords = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableWords = new javax.swing.JTable();
-        textDescription = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -103,16 +92,9 @@ public class VistaWords extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Escribe la palabra que quieres buscar en el diccionario");
+        jLabel1.setText("Escoge la palabra que quieres buscar en el diccionario");
 
-        jLabel3.setText("Write the world that you want to search in the diccionary");
-
-        buttonTableWords.setText("Tabla Palabras");
-        buttonTableWords.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonTableWordsActionPerformed(evt);
-            }
-        });
+        jLabel3.setText("Select the word that you want to search in the dictionary");
 
         tableWords.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -132,6 +114,13 @@ public class VistaWords extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tableWords);
 
+        jButton1.setText("Salir");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -139,48 +128,34 @@ public class VistaWords extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(52, 52, 52)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(195, 195, 195)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(textWord, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(50, 50, 50)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))))
-                        .addGap(71, 357, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(buttonTableWords)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(textDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(108, 108, 108))))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))))
+                .addGap(71, 358, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(294, 294, 294))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(36, 36, 36)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(textWord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel3)))
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(buttonTableWords)
-                    .addComponent(textDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(48, 48, 48))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(56, 56, 56))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void buttonTableWordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTableWordsActionPerformed
-//        this.buttonTable = true;
-//        showTableWords();
-    }//GEN-LAST:event_buttonTableWordsActionPerformed
 
     
     public ArrayList<Word_ESP> loadArray() {
@@ -216,6 +191,12 @@ public class VistaWords extends javax.swing.JFrame {
 
         this.out.println("PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + login + "#" + token + "#" + word_ESP.get(row).getCod_palabra());
     }//GEN-LAST:event_tableWordsMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+        this.out.println("BYE");
+        System.exit(0);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     public String[] transformWords(String[] words, int nWords) {
 
@@ -277,7 +258,7 @@ public class VistaWords extends javax.swing.JFrame {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonTableWords;
+    private javax.swing.JButton jButton1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JDialog jDialog2;
     private javax.swing.JFrame jFrame1;
@@ -285,8 +266,6 @@ public class VistaWords extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tableWords;
-    private javax.swing.JTextField textDescription;
-    private javax.swing.JTextField textWord;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -9,25 +9,30 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import modelo.Word;
-import modelo.Word_ESP;
 import protocolo.Protocol;
 
 public class ThreadServer implements Runnable {
 
     private Socket socket;
-    public Thread thread;
+    private Thread thread;
     private String name;
     private Protocol protocol;
+    private ArrayList<ThreadServer> arrayThread;
+    private int idThread;
 
-    public ThreadServer(Socket socket) {
+    public ThreadServer(Socket socket, int idThread, ArrayList<ThreadServer> hebras) throws IOException, SQLException {
         this.socket = socket;
+        thread = new Thread(this);
+        this.idThread = idThread;
+        this.arrayThread = hebras;
+        this.protocol = new Protocol(this.socket, this.arrayThread);
     }
 
-    public ThreadServer(Socket socket, String name) {
+    public ThreadServer(Socket socket, String name, ArrayList array) {
         this.socket = socket;
         this.name = name;
         this.thread = new Thread(this, name);
+        this.arrayThread = array;
     }
 
     public Socket getSocket() {
@@ -46,27 +51,44 @@ public class ThreadServer implements Runnable {
         this.thread = thread;
     }
 
+    public ArrayList getArrayThread() {
+        return arrayThread;
+    }
+
+    public void setArrayThread(ArrayList arrayThread) {
+        this.arrayThread = arrayThread;
+    }
+
+    public Protocol getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(Protocol protocol) {
+        this.protocol = protocol;
+    }
+    
+    
+    
     @Override
     public void run() {
 
         try {
             String inputLine, outputLine;
-
-            protocol = new Protocol(this.socket);
             PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            ArrayList<Word_ESP> array = new ArrayList<Word_ESP>();
 
             while ((inputLine = in.readLine()) != null) {
 
                 System.out.println("SERVIDOR");
-                
+
                 System.out.println("EL SERVIDOR VA A LEER: " + inputLine);
 
                 outputLine = protocol.processInput(inputLine);
-                
+
                 System.out.println("EL SERVIDOR HA PROCESADO: " + outputLine);
-                
+
+                System.out.println("LLEVAMOS UN TOTAL DE: " + this.getArrayThread().size() + " USUARIOS DENTRO");
+
                 out.println(outputLine);
             }
             System.out.println("FINALIZAMOS LA HEBRA DEL SERVIDOR");

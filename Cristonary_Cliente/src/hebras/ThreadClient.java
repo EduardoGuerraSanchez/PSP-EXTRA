@@ -20,20 +20,19 @@ public class ThreadClient implements Runnable {
 
     private final Socket socket;
     private final Thread thread;
-    private String name;
-    private ArrayList arrayWords;
     private VistaLogin vistaLogin;
     private PrintWriter out;
     private BufferedReader in;
     private String login;
     private String token;
     private String cadena[];
-    private String aux[];
     private VistaWords_ESP vistaWords_ESP;
     File fich;
     FileOutputStream salida;
     private String nameMultimedia, format;
     private int totalBytes, sizeMultimedia;
+    private int contadorFoto = 0;
+    private boolean doneMultimedia;
 
     public ThreadClient(Socket socket) throws IOException {
         this.socket = socket;
@@ -53,7 +52,6 @@ public class ThreadClient implements Runnable {
             String inputLine = null;
             String outputLine = null;
 
-            arrayWords = new ArrayList();
             //CON EL OUT MANDO A ESCRIBIR
             this.out = new PrintWriter(this.socket.getOutputStream(), true);
             //CON EL IN LEO LO QUE ME HAN MANDADO
@@ -63,84 +61,59 @@ public class ThreadClient implements Runnable {
 
                     cadena = inputLine.split("#");
                     System.out.println("CLIENTE");
-                    System.out.println(cadena[1]);
 
-                    switch (cadena[1]) {
-                        case "WELLCOME":
-                            System.out.println("ENTRAMOS EN EL WELLCOME");
-                            procesInput(inputLine);
+                    System.out.println(inputLine);
 
-                            this.vistaLogin.setVisible(false);
+                    if (cadena.length > 1) {
+                        switch (cadena[1]) {
+                            case "WELLCOME":
+                                System.out.println("ENTRAMOS EN EL WELLCOME");
+                                procesInput(inputLine);
 
-                            this.out.println("#GET_WORD");
-                            System.out.println("SALIMOS DEL WELLCOME");
-                            break;
+                                this.vistaLogin.setVisible(false);
 
-                        case "AVAIBLE_WORDS":
-                            System.out.println("ENTRAMOS EN AVAIBLE");
-                            VistaWords vistaWords = new VistaWords(this.socket, inputLine, this.login, this.token);
+                                this.out.println("#GET_WORD");
+                                System.out.println("SALIMOS DEL WELLCOME");
+                                break;
 
-                            vistaWords.setVisible(true);
-                            System.out.println("SALIMOS DE AVAIBLE");
-                            break;
+                            case "AVAIBLE_WORDS":
+                                System.out.println("ENTRAMOS EN AVAIBLE");
+                                VistaWords vistaWords = new VistaWords(this.socket, inputLine, this.login, this.token);
 
-                        case "GET_SPECIFIC_WORD":
+                                vistaWords.setVisible(true);
+                                System.out.println("SALIMOS DE AVAIBLE");
+                                break;
 
-                            System.out.println("ESTO CONTIENE: " + inputLine);
-                            this.cadena = inputLine.split("#");
+                            case "GET_SPECIFIC_WORD":
+                                System.out.println("ESTO CONTIENE: " + inputLine);
+                                this.cadena = inputLine.split("#");
 //                            this.cadena = inputLine.split("@");
 
-                            System.out.println("COMENSEMO A VE");
-                            System.out.println(this.cadena[0]);//PROTOCOLCRISTONARY1.0
+                                System.out.println("COMENSEMO A VE");
+                                System.out.println(this.cadena[0]);//PROTOCOLCRISTONARY1.0
 
-                            System.out.println(this.cadena[1]);//GET_SPECIFIC_WORD
-                            System.out.println(this.cadena[2]);//1@arbol@edeuve@Planta perenne, de tronco leñoso y elevado, que se ramifica a cierta altura del suelo.
+                                System.out.println(this.cadena[1]);//GET_SPECIFIC_WORD
+                                System.out.println(this.cadena[2]);//1@arbol@edeuve@Planta perenne, de tronco leñoso y elevado, que se ramifica a cierta altura del suelo.
 
-                            System.out.println(this.cadena[3]);//png
-                            this.format = cadena[3];
-                            System.out.println("A VER QUE CANTIDAD TIENE ESTO: " + this.cadena[4]);//0
-                            this.sizeMultimedia = Integer.parseInt(this.cadena[4]);
+                                System.out.println(this.cadena[3]);//png
+                                this.format = cadena[3];
+                                System.out.println("A VER QUE CANTIDAD TIENE ESTO: " + this.cadena[4]);//0
+                                this.sizeMultimedia = Integer.parseInt(this.cadena[4]);
 
-                            this.vistaWords_ESP = new VistaWords_ESP(this.socket, this.cadena[2], this.login, this.token, this.cadena[3], Integer.parseInt(this.cadena[4]), this);
+                                this.vistaWords_ESP = new VistaWords_ESP(this.socket, this.cadena[2], this.login, this.token, this.cadena[3], Integer.parseInt(this.cadena[4]), this);
 
-                            this.vistaWords_ESP.setVisible(true);
-                            break;
+                                this.vistaWords_ESP.setVisible(true);
+                                break;
+                                
+                            case "ADIOSXULO":
+                                System.out.println("AQUI NUNCA ENTRAMOS???");
+                                this.out.println("BYE");
+                                break;
 
-                        default:
-                            procesMultimedia(cadena);
+                            default:
+                                procesMultimedia(cadena);
+                        }
                     }
-
-//                    System.out.println("CLIENTE");
-//
-//                    if (inputLine.contains("#WELLCOME")) {
-//
-//                        procesInput(inputLine);
-//
-//                        this.vistaLogin.setVisible(false);
-//
-//                        this.out.println("#GET_WORD");
-//                    }
-//
-//                    if (inputLine.contains("#AVAIBLE")) {
-//
-//                        VistaWords vistaWords = new VistaWords(this.socket, inputLine, this.login, this.token);
-//
-//                        vistaWords.setVisible(true);
-//                    }
-//
-//                    if (inputLine.contains("GET_SPECIFIC_WORD")) {
-//                        System.out.println("ESTO CONTIENE: " + inputLine);
-//                        this.cadena = inputLine.split("#");
-//                        this.cadena = inputLine.split("@");
-//
-//                        VistaWords_ESP vistaWords_ESP = new VistaWords_ESP(this.socket, this.cadena[3], this.cadena[1]);
-//
-//                        vistaWords_ESP.setVisible(true);
-//                    }
-//
-//                    System.out.println("SI VES ESTO ES PORQUE NO HA ENTRADO EN NINGUN IF: " + inputLine);
-//                    thread.wait();
-//                    this.thread.join();
                 }
                 this.socket.close();
             } catch (IOException ex) {
@@ -175,25 +148,23 @@ public class ThreadClient implements Runnable {
 
         System.out.println(nameMultimedia + format);
 
-        fich = new File(nameMultimedia + format);
-        salida = new FileOutputStream(fich);
+        if (this.doneMultimedia == false) {
+            fich = new File(nameMultimedia + format);
+            salida = new FileOutputStream(fich);
+            this.doneMultimedia = true;
+        }
 
         byte[] fragment = Base64.getDecoder().decode(this.cadena[3]);
         salida.write(fragment);
 
-        System.out.println(this.cadena[0]);
-        System.out.println(this.cadena[1]);
-        System.out.println(this.cadena[2]);
-        System.out.println(this.cadena[3]);
-
         this.totalBytes += 512;
-        System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
         System.out.println(sizeMultimedia);
+        System.out.println(totalBytes);
         if (totalBytes >= sizeMultimedia) {
             System.out.println("----------------------------------------------------------------------------------");
             this.vistaWords_ESP.addMultimedia(fich.getAbsolutePath());
             this.totalBytes = 0;
+            this.doneMultimedia = false;
         }
     }
-
 }
