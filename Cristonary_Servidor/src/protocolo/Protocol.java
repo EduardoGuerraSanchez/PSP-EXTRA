@@ -72,6 +72,8 @@ public class Protocol {
             String name = null;
             int tamanio = 0;
             String type = null;
+            String creator = null;
+            String definition = null;
 
             System.out.println("ESTO VA A SER: " + theInput);
             cadena = theInput.split(SIGN);
@@ -81,18 +83,20 @@ public class Protocol {
             System.out.println(this.cadena[3]);//-707877684
             this.token = this.cadena[3];
             System.out.println(this.cadena[4]);//1
+            System.out.println(this.cadena[5]);//ESP / ING
 
-            theOutput = this.protocolController.get_specific_word(cadena[4]);
-            name = this.protocolController.getNameFromSpecificWord();
+            definition = this.protocolController.get_specific_definition(this.cadena[4],this.cadena[5]);
+            name = this.protocolController.getNameFromSpecificWord(this.cadena[4],this.cadena[5]);
             tamanio = this.protocolController.getSizeMultimedia();
             type = this.protocolController.getType();
+            creator = this.protocolController.getCreator(this.cadena[4]);
             
-            theOutput = "PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + cadena[4] + "@" + name + "@" + this.login + "@" + theOutput + "#" + type + "#" + tamanio;
+            theOutput = "PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + cadena[4] + "@" + name + "@" + creator + "@" + definition + "#" + type + "#" + tamanio + "#" + this.cadena[5];
         }
 
         if (theInput.contains(PREPARED_TO_RECEIVE)) {
             System.out.println(cadena[4]);
-            multimediaWordController.sendMultimedia(cadena[4]);
+            multimediaWordController.sendMultimedia(cadena[4],this.cadena[5]);
         }
         
         if(theInput.contains(BYE)){

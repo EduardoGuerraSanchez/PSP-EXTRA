@@ -19,6 +19,8 @@ public class ThreadServer implements Runnable {
     private Protocol protocol;
     private ArrayList<ThreadServer> arrayThread;
     private int idThread;
+    private PrintWriter out;
+    private BufferedReader in;
 
     public ThreadServer(Socket socket, int idThread, ArrayList<ThreadServer> hebras) throws IOException, SQLException {
         this.socket = socket;
@@ -66,16 +68,30 @@ public class ThreadServer implements Runnable {
     public void setProtocol(Protocol protocol) {
         this.protocol = protocol;
     }
-    
-    
+
+    public PrintWriter getOut() {
+        return out;
+    }
+
+    public void setOut(PrintWriter out) {
+        this.out = out;
+    }
+
+    public BufferedReader getIn() {
+        return in;
+    }
+
+    public void setIn(BufferedReader in) {
+        this.in = in;
+    }
     
     @Override
     public void run() {
 
         try {
             String inputLine, outputLine;
-            PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            this.out = new PrintWriter(this.socket.getOutputStream(), true);
+            this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 
             while ((inputLine = in.readLine()) != null) {
 
@@ -84,12 +100,12 @@ public class ThreadServer implements Runnable {
                 System.out.println("EL SERVIDOR VA A LEER: " + inputLine);
 
                 outputLine = protocol.processInput(inputLine);
-
+                
                 System.out.println("EL SERVIDOR HA PROCESADO: " + outputLine);
 
                 System.out.println("LLEVAMOS UN TOTAL DE: " + this.getArrayThread().size() + " USUARIOS DENTRO");
 
-                out.println(outputLine);
+                this.out.println(outputLine);
             }
             System.out.println("FINALIZAMOS LA HEBRA DEL SERVIDOR");
             this.socket.close();

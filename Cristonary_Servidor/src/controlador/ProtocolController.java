@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import modelo.Word;
 import modelo.Word_ESP;
+import modelo.Word_ING;
 
 public class ProtocolController {
 
@@ -23,21 +24,24 @@ public class ProtocolController {
     private String type;
     private ArrayList<Word> arrayWord;
     private ArrayList<Word_ESP> arrayESP;
+    private ArrayList<Word_ING> arrayING;
     private ArrayList<ThreadServer> arrayThread;
 
     public ProtocolController(ArrayList<ThreadServer> array) throws SQLException, IOException {
-
-        Words_ESP_Controller words_ESP_Controller = new Words_ESP_Controller();
-
-        this.arrayESP = words_ESP_Controller.getTableWords_ESP();
 
         WordsController wordsController = new WordsController();
 
         this.arrayWord = wordsController.getTableWords();
 
-        this.arrayThread = array;
+        Words_ESP_Controller words_ESP_Controller = new Words_ESP_Controller();
 
-        System.out.println("-------------------------------------------------------------------------------------------------- son en total: " + this.arrayThread.size());
+        this.arrayESP = words_ESP_Controller.getTableWords_ESP();
+
+        Words_ING_Controller words_ING_Controller = new Words_ING_Controller();
+
+        this.arrayING = words_ING_Controller.getTableWords_ING();
+
+        this.arrayThread = array;
     }
 
     public String getLoginProtocol() {
@@ -159,7 +163,7 @@ public class ProtocolController {
     public String getWords() throws SQLException {
         String a = null;
 
-        String protocol = "PROTOCOLOCRISTONARY1.0#AVAIBLE_WORDS#" + this.arrayESP.size() + "#";
+        String protocol = "PROTOCOLOCRISTONARY1.0#AVAIBLE_WORDS#" + (this.arrayESP.size() + this.arrayING.size()) + "#";
 
         for (int contador = 0; contador < this.arrayESP.size(); contador++) {
 
@@ -173,56 +177,142 @@ public class ProtocolController {
             }
 
         }
+        protocol = protocol + "#" + "ESP" + "#";
+
+        for (int contador = 0; contador < this.arrayING.size(); contador++) {
+
+            a = this.arrayING.get(contador).getCod_palabra() + "@" + this.arrayING.get(contador).getWord_ING() + "@" + this.arrayING.get(contador).getDefinition_ING();
+
+            protocol = protocol + a;
+
+        }
+        protocol = protocol + "#" + "ING";
+
         System.out.println("COMO QUEDA: " + a);
+        System.out.println(this.arrayING.size());
         System.out.println(protocol);
 
         return protocol;
     }
 
-    public String get_specific_word(String pk) throws SQLException, IOException {
+    public String get_specific_definition(String pk, String languaje) throws SQLException, IOException {
 
         String description = null;
 
         System.out.println("LA PK ES: " + pk);
 
-        for (int contador = 0; contador < this.arrayESP.size(); contador++) {
+        if ("ESP".equals(languaje)) {
+            for (int contador = 0; contador < this.arrayESP.size(); contador++) {
 
-            System.out.println("esto va a ser: " + this.arrayESP.get(contador).getCod_palabra());
-            if (pk.equals(this.arrayESP.get(contador).getCod_palabra())) {
+                System.out.println("esto va a ser: " + this.arrayESP.get(contador).getCod_palabra());
+                if (pk.equals(this.arrayESP.get(contador).getCod_palabra())) {
 
-                System.out.println("Mandamos tu descripcion");
-                description = this.arrayESP.get(contador).getDefinition_ESP();
-                this.i = contador;
-                this.arrayESP.get(this.i).getMultimediaWord().initializeMultimedia(this.arrayWord.get(this.i).getMultimedia());//Añadimos la ruta
-                this.sizeMultimedia = this.arrayESP.get(this.i).getMultimediaWord().getMultimediaSize();
-                this.type = this.arrayWord.get(i).getMultimedia().substring(this.arrayWord.get(i).getMultimedia().length() - 4, this.arrayWord.get(i).getMultimedia().length());
+                    System.out.println("Mandamos tu descripcion");
+                    description = this.arrayESP.get(contador).getDefinition_ESP();
+                    this.i = contador;
+                    this.arrayESP.get(this.i).getMultimediaWord().initializeMultimedia(this.arrayWord.get(this.i).getMultimedia());//Añadimos la ruta
+                    System.out.println("NO ES EL PROTOCOLOESPPPPP,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, " + this.i);
+
+                    this.sizeMultimedia = this.arrayESP.get(this.i).getMultimediaWord().getMultimediaSize();
+                    this.type = this.arrayWord.get(i).getMultimedia().substring(this.arrayWord.get(i).getMultimedia().length() - 4, this.arrayWord.get(i).getMultimedia().length());
+                }
             }
         }
+
+        if ("ING".equals(languaje)) {
+
+            for (int contador = 0; contador < this.arrayING.size(); contador++) {
+
+                System.out.println("esto va a ser: " + this.arrayING.get(contador).getCod_palabra());
+                if (pk.equals(this.arrayING.get(contador).getCod_palabra())) {
+
+                    System.out.println("Mandamos tu descripcion");
+                    description = this.arrayING.get(contador).getDefinition_ING();
+                    this.i = contador;
+                    this.arrayING.get(this.i).getMultimediaWord().initializeMultimedia(this.arrayWord.get(this.i).getMultimedia());//Añadimos la ruta
+                    System.out.println("NO ES EL PROTOCOLOESPPPPP,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, " + this.i);
+
+                    this.sizeMultimedia = this.arrayING.get(this.i).getMultimediaWord().getMultimediaSize();
+                    this.type = this.arrayWord.get(i).getMultimedia().substring(this.arrayWord.get(i).getMultimedia().length() - 4, this.arrayWord.get(i).getMultimedia().length());
+                }
+            }
+        }
+
         return description;
     }
 
-    public String getNameFromSpecificWord() throws SQLException {
+    public String getNameFromSpecificWord(String pk, String languaje) throws SQLException {
 
         String name = null;
+        boolean done = false;
 
-        name = this.arrayESP.get(i).getWord_ESP();
+        if ("ING".equals(languaje)) {
+
+            for (int contador = 0; contador < this.arrayING.size() && done == false; contador++) {
+                
+                if (pk.equals(this.arrayING.get(contador).getCod_palabra())) {
+                    name = this.arrayING.get(contador).getWord_ING();
+                    done = true;
+                }
+
+            }
+
+        }
+
+        if ("ESP".equals(languaje)) {
+            
+            for (int contador = 0; contador < this.arrayESP.size() && done == false; contador++) {
+                
+                if (pk.equals(this.arrayESP.get(contador).getCod_palabra())) {
+                    name = this.arrayESP.get(contador).getWord_ESP();
+                }
+            }
+
+        }
 
         return name;
     }
 
-    public String sizeMultimedia() throws SQLException, IOException {
+    public String getCreator(String pk) {
+        String a = null;
+
+        System.out.println("ESTA ES LA PK: " + pk);
+        boolean done = false;
+
+        for (int contador = 0; contador < arrayWord.size() && done == false; contador++) {
+            System.out.println(arrayWord.get(contador).getLogin());
+            System.out.println(arrayWord.get(contador).getCod_word());
+
+            if (this.arrayWord.get(contador).getCod_word().equals(pk)) {
+                System.out.println("DISELO MI PUTISIMO GORDO");
+                a = this.arrayWord.get(contador).getLogin();
+                done = true;
+            }
+
+        }
+
+        System.out.println("TAMBIEN ESTO: " + a);
+
+        return a;
+    }
+
+    public String sizeMultimedia(String languaje) throws SQLException, IOException {
 
         String numero = null;
 
-        numero = String.valueOf(this.arrayESP.get(this.i).getMultimediaWord().getMultimediaSize());
+        if ("ESP".equals(languaje)) {
+            numero = String.valueOf(this.arrayESP.get(this.i).getMultimediaWord().getMultimediaSize());
+        }
 
-        System.out.println("AQUI EL NUMERO VA A SER: " + numero);
+        if ("ING".equals(languaje)) {
+            numero = String.valueOf(this.arrayING.get(this.i).getMultimediaWord().getMultimediaSize());
+        }
 
         return numero;
     }
 
     public String deleteUser(String login, String token) throws IOException {
-        
+
         String message = null;
 
         for (int contador = 0; contador < this.arrayThread.size(); contador++) {
@@ -231,11 +321,11 @@ public class ProtocolController {
             if (loginPrueba.equals(login)) {
                 message = "PROTOCOLOCRISTONARY1.0#ADIOSXULO#" + login + "#" + token;
                 this.arrayThread.get(contador).getSocket().close();
+                this.arrayThread.get(contador).getIn().close();
+                this.arrayThread.get(contador).getOut().close();
                 this.arrayThread.remove(contador);
             }
-
         }
         return message;
     }
-
 }

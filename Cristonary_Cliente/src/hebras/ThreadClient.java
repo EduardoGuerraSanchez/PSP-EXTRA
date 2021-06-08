@@ -12,9 +12,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import map.TimeDate;
 import vistas.VistaLogin;
 import vistas.VistaWords;
 import vistas.VistaWords_ESP;
+import vistas.VistaWords_ING;
 
 public class ThreadClient implements Runnable {
 
@@ -26,13 +28,17 @@ public class ThreadClient implements Runnable {
     private String login;
     private String token;
     private String cadena[];
+    private String languaje;
+    private String aux[];
     private VistaWords_ESP vistaWords_ESP;
+    private VistaWords_ING vistaWords_ING;
     File fich;
     FileOutputStream salida;
     private String nameMultimedia, format;
     private int totalBytes, sizeMultimedia;
     private int contadorFoto = 0;
     private boolean doneMultimedia;
+    private TimeDate timedate;
 
     public ThreadClient(Socket socket) throws IOException {
         this.socket = socket;
@@ -87,7 +93,8 @@ public class ThreadClient implements Runnable {
                             case "GET_SPECIFIC_WORD":
                                 System.out.println("ESTO CONTIENE: " + inputLine);
                                 this.cadena = inputLine.split("#");
-//                            this.cadena = inputLine.split("@");
+                                this.aux = inputLine.split("#");
+                                this.aux = inputLine.split("@");
 
                                 System.out.println("COMENSEMO A VE");
                                 System.out.println(this.cadena[0]);//PROTOCOLCRISTONARY1.0
@@ -97,21 +104,32 @@ public class ThreadClient implements Runnable {
 
                                 System.out.println(this.cadena[3]);//png
                                 this.format = cadena[3];
-                                System.out.println("A VER QUE CANTIDAD TIENE ESTO: " + this.cadena[4]);//0
+                                System.out.println("A VER QUE CANTIDAD TIENE ESTO: " + this.cadena[4]);
                                 this.sizeMultimedia = Integer.parseInt(this.cadena[4]);
+                                System.out.println(this.cadena[5]);
+                                this.languaje = this.cadena[5];
 
-                                this.vistaWords_ESP = new VistaWords_ESP(this.socket, this.cadena[2], this.login, this.token, this.cadena[3], Integer.parseInt(this.cadena[4]), this);
+                                if ("ESP".equals(this.cadena[5])) {
+                                    this.vistaWords_ESP = new VistaWords_ESP(this.socket, this.cadena[2], this.login, this.token, this.cadena[3], Integer.parseInt(this.cadena[4]), this.aux[2], this);
 
-                                this.vistaWords_ESP.setVisible(true);
+                                    this.vistaWords_ESP.setVisible(true);
+                                }
+
+                                if ("ING".equals(this.cadena[5])) {
+                                    this.vistaWords_ING = new VistaWords_ING(this.socket, this.cadena[2], this.login, this.token, this.cadena[3], Integer.parseInt(this.cadena[4]), this.aux[2], this);
+
+                                    this.vistaWords_ING.setVisible(true);
+                                }
+
                                 break;
-                                
+
                             case "ADIOSXULO":
                                 System.out.println("AQUI NUNCA ENTRAMOS???");
                                 this.out.println("BYE");
                                 break;
 
                             default:
-                                procesMultimedia(cadena);
+                                procesMultimedia(cadena,this.languaje);
                         }
                     }
                 }
@@ -144,7 +162,7 @@ public class ThreadClient implements Runnable {
 
     }
 
-    public void procesMultimedia(String[] message) throws FileNotFoundException, IOException {
+    public void procesMultimedia(String[] message,String languaje) throws FileNotFoundException, IOException {
 
         System.out.println(nameMultimedia + format);
 
@@ -160,11 +178,25 @@ public class ThreadClient implements Runnable {
         this.totalBytes += 512;
         System.out.println(sizeMultimedia);
         System.out.println(totalBytes);
-        if (totalBytes >= sizeMultimedia) {
+        
+        if("ESP".equals(languaje)){
+           if (totalBytes >= sizeMultimedia) {
             System.out.println("----------------------------------------------------------------------------------");
             this.vistaWords_ESP.addMultimedia(fich.getAbsolutePath());
             this.totalBytes = 0;
             this.doneMultimedia = false;
+        } 
         }
+        
+        if("ING".equals(languaje)){
+            if (totalBytes >= sizeMultimedia) {
+            System.out.println("----------------------------------------------------------------------------------");
+            this.vistaWords_ING.addMultimedia(fich.getAbsolutePath());
+            this.totalBytes = 0;
+            this.doneMultimedia = false;
+        }
+        }
+        
+        
     }
 }

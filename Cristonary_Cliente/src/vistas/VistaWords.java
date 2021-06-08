@@ -1,16 +1,13 @@
 package vistas;
 
 import controller.VistaWordsController;
-import hebras.ThreadClient;
-import java.io.BufferedReader;
+import controller.VistaWords_ING_Controller;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import map.Word_ESP;
+import map.Word_ING;
 
 public class VistaWords extends javax.swing.JFrame {
 
@@ -18,16 +15,21 @@ public class VistaWords extends javax.swing.JFrame {
     String mensaje;
     String login;
     String token;
-    private ArrayList<Word_ESP> word_ESP;
+    private ArrayList<Word_ESP> arrayWord_ESP;
+    private ArrayList<Word_ING> arrayWord_ING;
     private String words[];
     private String tabla[][];
+    private String tabla_ING[][];
     private PrintWriter out;
+    private int contador;
+    private int tamanio;
 
     public VistaWords(Socket socket, String mensaje, String login, String token) throws IOException {
         initComponents();
         this.socket = socket;
         this.mensaje = mensaje;
-        this.word_ESP = loadArray();
+        this.arrayWord_ESP = loadArray();
+        this.arrayWord_ING = loadArray_ING();
         this.login = login;
         this.token = token;
         System.out.println("aaaa");
@@ -35,9 +37,14 @@ public class VistaWords extends javax.swing.JFrame {
 
         this.out = new PrintWriter(this.socket.getOutputStream(), true);
 
-        VistaWordsController vistaWordsController = new VistaWordsController(this.mensaje,this.word_ESP);
+        VistaWordsController vistaWordsController = new VistaWordsController(this.mensaje, this.arrayWord_ESP);
         this.tabla = vistaWordsController.showTable();
         tableWords.setModel(new javax.swing.table.DefaultTableModel(this.tabla, new String[]{"Nombre"}));
+
+        VistaWords_ING_Controller vistaWords_ING_Controller = new VistaWords_ING_Controller(this.mensaje, this.arrayWord_ING);
+        this.tabla_ING = vistaWords_ING_Controller.showTable();
+        tableWordsENGLISH.setModel(new javax.swing.table.DefaultTableModel(this.tabla_ING, new String[]{"Name"}));
+
     }
 
     private VistaWords() {
@@ -56,6 +63,8 @@ public class VistaWords extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tableWords = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tableWordsENGLISH = new javax.swing.JTable();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -121,6 +130,24 @@ public class VistaWords extends javax.swing.JFrame {
             }
         });
 
+        tableWordsENGLISH.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Name"
+            }
+        ));
+        tableWordsENGLISH.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableWordsENGLISHMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tableWordsENGLISH);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -128,17 +155,21 @@ public class VistaWords extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(52, 52, 52)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(195, 195, 195)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))))
-                .addGap(71, 358, Short.MAX_VALUE))
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(71, 358, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1)
-                .addGap(294, 294, 294))
+                .addGap(425, 425, 425))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -148,16 +179,17 @@ public class VistaWords extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(80, 80, 80)
                 .addComponent(jButton1)
-                .addGap(56, 56, 56))
+                .addContainerGap(300, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
     public ArrayList<Word_ESP> loadArray() {
 
         ArrayList<Word_ESP> array = new ArrayList();
@@ -165,8 +197,12 @@ public class VistaWords extends javax.swing.JFrame {
 
         this.words = this.mensaje.split("#");
         int totalWords = Integer.parseInt(this.words[2]);
-
+        System.out.println(totalWords);
         this.words = transformWords(this.words, totalWords);
+        System.out.println("VAMOS A DEMOSTRAR QUE...");
+        for (int contador = 0; contador < this.words.length; contador++) {
+            System.out.println(this.words[contador]);
+        }
 
         for (int contador = 0; contador < this.words.length; contador++) {
             Word_ESP word_ESP = new Word_ESP();
@@ -176,20 +212,45 @@ public class VistaWords extends javax.swing.JFrame {
             word_ESP.setWord_ESP(a[1]);
             word_ESP.setDefinition_ESP(a[2]);
             array.add(word_ESP);
+            System.out.println(array.get(contador));
         }
 
         return array;
     }
-    
+
+    public ArrayList<Word_ING> loadArray_ING() {
+
+        ArrayList<Word_ING> array = new ArrayList<Word_ING>();
+        String[] a;
+
+        this.words = this.mensaje.split("#");
+        int totalWords = Integer.parseInt(this.words[2]);
+
+        this.words = transformWords_ING(this.words, totalWords);
+
+        for (int contador = 0; contador < words.length; contador++) {
+            System.out.println(this.words[contador]);
+        }
+
+        for (int contador = 0; contador < this.words.length; contador++) {
+            Word_ING word_ING = new Word_ING();
+
+            a = this.words[contador].split("@");
+            word_ING.setCod_palabra(a[0]);
+            word_ING.setWord_ING(a[1]);
+            word_ING.setDefinition_ING(a[2]);
+            array.add(word_ING);
+        }
+        return array;
+    }
+
     private void tableWordsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableWordsMouseClicked
 
         int row = tableWords.getSelectedRow();
-        
-        System.out.println("AQUII: " + this.mensaje);
-        
-//      this.out.println("GET_SPECIFIC_WORD");
 
-        this.out.println("PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + login + "#" + token + "#" + word_ESP.get(row).getCod_palabra());
+        System.out.println("AQUII: " + this.mensaje);
+
+        this.out.println("PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + login + "#" + token + "#" + arrayWord_ESP.get(row).getCod_palabra() + "#" + "ESP");
     }//GEN-LAST:event_tableWordsMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -198,64 +259,84 @@ public class VistaWords extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void tableWordsENGLISHMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableWordsENGLISHMouseClicked
+
+        int row = tableWordsENGLISH.getSelectedRow();
+
+        System.out.println("AQUII: " + this.mensaje);
+
+        this.out.println("PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + login + "#" + token + "#" + arrayWord_ING.get(row).getCod_palabra() + "#" + "ING");
+    }//GEN-LAST:event_tableWordsENGLISHMouseClicked
+
     public String[] transformWords(String[] words, int nWords) {
 
-        String[] array = new String[nWords];
+        this.tamanio = nWords - 1;
+        String[] array = new String[tamanio];
+
         int i = 0;
-        for (int contador = 3; contador < words.length; contador++) {
-            array[i] = words[contador];
-            i++;
+        boolean done = false;
+        System.out.println("las palabras tiene: " + words.length);
+        System.out.println("el array tiene: " + array.length);
+
+        for (this.contador = 3; this.contador < words.length && done == false; this.contador++) {
+
+//            if ("ESP".equals(words[contador])) {
+//                done = true;
+//            } else {
+//                System.out.println(array[i]);
+//                System.out.println("ESTO YA LLEVA: " + words[contador]);
+//                array[i] = words[contador];
+//                i++;
+//            }
+            if ("ESP".equals(words[this.contador])) {
+                done = true;
+            } else {
+                System.out.println("ESTO YA LLEVA: " + words[this.contador]);
+                System.out.println("EL ARRAY QUEDA: " + array[i]);
+                array[i] = words[this.contador];
+                i++;
+            }
         }
+
         return array;
     }
-//
-//    public final void showTableWords() {
-//
-//        String[] cadena = this.mensaje.split("#");
-//        int totalWords = Integer.parseInt(cadena[2]);
-//
-//        this.words = transformWords(cadena, totalWords);
-//        this.tabla = new String[words.length][1];
-//
-//        for (int contador = 0; contador < words.length; contador++) {
-//            this.tabla[contador][0] = words[contador];
-//        }
-//
-////        this.out.println("MIS_GORDOS");
-//        tableWords.setModel(new javax.swing.table.DefaultTableModel(tabla, new String[]{"Nombre"}));
-//    }
 
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(VistaWords.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(VistaWords.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(VistaWords.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(VistaWords.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new VistaWords().setVisible(true);
-//            }
-//        });
-//    }
+    public String[] transformWords_ING(String[] words, int nWords) {
+
+        System.out.println("-------------------------------------------------------------------------------------------------------------");
+        System.out.println("CUANTO ES NWORD: " + nWords);
+        System.out.println("Y LO OTRO" + contador);
+        int newTamanio = contador - nWords;
+
+        System.out.println(newTamanio);
+        System.out.println("tamanio: " + tamanio);
+        this.tamanio = this.tamanio - newTamanio;
+        String[] array = new String[this.tamanio];
+        boolean done = false;
+        int j = 0;
+
+        for (int a = contador; contador < words.length && done == false; a++) {
+
+            System.out.println("LO QUE SE VIENE: " + words[a]);
+            if ("ING".equals(words[a])) {
+                done = true;
+                System.out.println("to ta aut");
+            } else {
+                System.out.println("JUSTO ANTES: " + words[a]);
+
+                array[j] = words[a];
+                System.out.println("POR UN LADO: " + words[a]);
+                j++;
+            }
+
+        }
+        System.out.println("EN FIN...");
+        for (int contador = 0; contador < array.length; contador++) {
+            System.out.println(array[contador]);
+        }
+
+        return array;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -265,7 +346,9 @@ public class VistaWords extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tableWords;
+    private javax.swing.JTable tableWordsENGLISH;
     // End of variables declaration//GEN-END:variables
 
 }

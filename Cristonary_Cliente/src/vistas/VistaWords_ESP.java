@@ -20,14 +20,14 @@ public class VistaWords_ESP extends javax.swing.JFrame {
     private String format;
     private int nBytes;
     private ThreadClient threadClient;
-
+    private String creator;
     private PrintWriter out;
 
     public VistaWords_ESP() {
         initComponents();
     }
 
-    public VistaWords_ESP(Socket socket,String aux,String login,String key,String format,int nBytes,ThreadClient threadClient) throws IOException {
+    public VistaWords_ESP(Socket socket,String aux,String login,String key,String format,int nBytes,String creator,ThreadClient threadClient) throws IOException {
         initComponents();
         this.threadClient = threadClient;
         this.socket = socket;
@@ -39,11 +39,13 @@ public class VistaWords_ESP extends javax.swing.JFrame {
         this.nBytes = nBytes;
         this.nameWord = this.cadena[1];
         this.threadClient.setNameMultimedia(cod_word);
+        this.creator = creator;
         for(int contador = 0; contador < cadena.length;contador++){
             System.out.println("NUMERO: " + contador + " " + this.cadena[contador]);
         }
         this.textAreaDescription.append(this.cadena[3]);
-        this.labelName.setText(this.nameWord);
+        this.labelName1.setText(this.nameWord);
+        this.labelPropietario.setText("Esta palabra ha sido aportada por: " + this.creator);
         solicitarMultimedia(this.socket);
     }
 
@@ -68,9 +70,10 @@ public class VistaWords_ESP extends javax.swing.JFrame {
 
         jFrame1 = new javax.swing.JFrame();
         textAreaDescription = new java.awt.TextArea();
-        labelName = new java.awt.Label();
+        labelPropietario = new java.awt.Label();
         labelMultimedia = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        labelName1 = new java.awt.Label();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -85,7 +88,7 @@ public class VistaWords_ESP extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        labelName.setText("label1");
+        labelPropietario.setText("label1");
 
         jButton1.setText("Cerrar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -93,6 +96,8 @@ public class VistaWords_ESP extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
+
+        labelName1.setText("label1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -107,24 +112,35 @@ public class VistaWords_ESP extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(421, 421, 421)
                 .addComponent(jButton1)
+                .addGap(80, 80, 80)
+                .addComponent(labelPropietario, javax.swing.GroupLayout.PREFERRED_SIZE, 510, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(194, 194, 194)
-                .addComponent(labelName, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(204, 204, 204)
+                    .addComponent(labelName1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(761, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(labelName, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(80, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(labelMultimedia, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(textAreaDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(78, 78, 78)
-                .addComponent(jButton1)
-                .addGap(136, 136, 136))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(78, 78, 78)
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(95, 95, 95)
+                        .addComponent(labelPropietario, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(105, 105, 105))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(34, 34, 34)
+                    .addComponent(labelName1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(486, Short.MAX_VALUE)))
         );
 
         pack();
@@ -175,7 +191,8 @@ public class VistaWords_ESP extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JLabel labelMultimedia;
-    private java.awt.Label labelName;
+    private java.awt.Label labelName1;
+    private java.awt.Label labelPropietario;
     private java.awt.TextArea textAreaDescription;
     // End of variables declaration//GEN-END:variables
 }

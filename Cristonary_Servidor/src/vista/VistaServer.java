@@ -114,13 +114,6 @@ public class VistaServer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonONActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonONActionPerformed
-        
-//        try {
-//            openServer();
-//        } catch (IOException ex) {
-//            Logger.getLogger(VistaServer.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        
         this.listenerThread = new ListenerThread(this.serverSocket,true,this,arrayThread);
         this.listenerThread.listener.start();
     }//GEN-LAST:event_buttonONActionPerformed

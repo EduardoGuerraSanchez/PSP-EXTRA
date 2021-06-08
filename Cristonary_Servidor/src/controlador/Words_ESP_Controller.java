@@ -28,18 +28,4 @@ public class Words_ESP_Controller {
 
         return this.arrayWords_ESP_Controller;
     }
-
-//    public static void main(String[] args) throws SQLException {
-//        Words_ESP_Controller word_ESP = new Words_ESP_Controller();
-//
-//        ArrayList<Word_ESP> array = new ArrayList<Word_ESP>();
-//
-//        array = word_ESP.getTableWords_ESP();
-//
-//        for (int contador = 0; contador < array.size(); contador++) {
-//            System.out.println(array.get(contador).getDefinition_ESP());
-//        }
-//
-//    }
-
 }

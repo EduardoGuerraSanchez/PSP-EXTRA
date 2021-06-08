@@ -36,7 +36,7 @@ public class ListenerThread implements Runnable {
                 hebras.add(threadServer);
                 System.out.println("ESTO SON: " + hebras.size());
                 hebras.get(hebras.size() - 1).getThread().start();
-                System.out.println("AQUI NO LLEGAMOS");
+                System.out.println(listening);
             } catch (IOException ex) {
                 Logger.getLogger(ListenerThread.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
