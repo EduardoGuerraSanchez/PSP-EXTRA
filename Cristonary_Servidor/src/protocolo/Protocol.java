@@ -16,6 +16,7 @@ public class Protocol {
     private final String GET_WORD = "GET_WORD";
     private final String GET_SPECIFIC_WORD = "GET_SPECIFIC_WORD";
     private final String PREPARED_TO_RECEIVE = "PREPARED_TO_RECEIVE";
+    private final String REFRESH = "REFRESH";
     private final String BYE = "BYE";
     private ProtocolController protocolController;
     private MultimediaWordController multimediaWordController;
@@ -85,6 +86,7 @@ public class Protocol {
             System.out.println(this.cadena[4]);//1
             System.out.println(this.cadena[5]);//ESP / ING
 
+            this.protocolController.inizializarMultimedia(this.cadena[4]);
             definition = this.protocolController.get_specific_definition(this.cadena[4],this.cadena[5]);
             name = this.protocolController.getNameFromSpecificWord(this.cadena[4],this.cadena[5]);
             tamanio = this.protocolController.getSizeMultimedia();
@@ -99,10 +101,20 @@ public class Protocol {
             multimediaWordController.sendMultimedia(cadena[4],this.cadena[5]);
         }
         
+        if(theInput.contains(REFRESH)){
+            System.out.println("onrrRRRRRREFFFFFFRRREEESSSCAAAR");
+            theOutput = this.protocolController.refreshWords();
+            System.out.println(theOutput);
+        }
+        
         if(theInput.contains(BYE)){
             System.out.println("OLE OLE OLE QUE ESTAMOS OUT");
             theOutput = protocolController.deleteUser(this.login, this.token);
         }
+        
+        
+        
+        System.out.println("EL SERVIDOR PROTOCOLO VA A DEVOLVER: " + theOutput);
         return theOutput;
     }
 

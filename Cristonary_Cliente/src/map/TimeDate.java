@@ -42,7 +42,7 @@ public class TimeDate extends TimerTask{
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         refreshTable();
     }
 }

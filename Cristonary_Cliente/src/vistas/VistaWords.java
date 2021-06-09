@@ -23,6 +23,7 @@ public class VistaWords extends javax.swing.JFrame {
     private PrintWriter out;
     private int contador;
     private int tamanio;
+    public int totalESP,totalING;
 
     public VistaWords(Socket socket, String mensaje, String login, String token) throws IOException {
         initComponents();
@@ -44,12 +45,29 @@ public class VistaWords extends javax.swing.JFrame {
         VistaWords_ING_Controller vistaWords_ING_Controller = new VistaWords_ING_Controller(this.mensaje, this.arrayWord_ING);
         this.tabla_ING = vistaWords_ING_Controller.showTable();
         tableWordsENGLISH.setModel(new javax.swing.table.DefaultTableModel(this.tabla_ING, new String[]{"Name"}));
-
     }
 
     private VistaWords() {
         initComponents();
     }
+
+    public ArrayList<Word_ESP> getArrayWord_ESP() {
+        return arrayWord_ESP;
+    }
+
+    public void setArrayWord_ESP(ArrayList<Word_ESP> arrayWord_ESP) {
+        this.arrayWord_ESP = arrayWord_ESP;
+    }
+
+    public ArrayList<Word_ING> getArrayWord_ING() {
+        return arrayWord_ING;
+    }
+
+    public void setArrayWord_ING(ArrayList<Word_ING> arrayWord_ING) {
+        this.arrayWord_ING = arrayWord_ING;
+    }
+    
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -272,6 +290,7 @@ public class VistaWords extends javax.swing.JFrame {
 
         this.tamanio = nWords - 1;
         String[] array = new String[tamanio];
+        this.totalESP = tamanio;
 
         int i = 0;
         boolean done = false;
@@ -280,14 +299,6 @@ public class VistaWords extends javax.swing.JFrame {
 
         for (this.contador = 3; this.contador < words.length && done == false; this.contador++) {
 
-//            if ("ESP".equals(words[contador])) {
-//                done = true;
-//            } else {
-//                System.out.println(array[i]);
-//                System.out.println("ESTO YA LLEVA: " + words[contador]);
-//                array[i] = words[contador];
-//                i++;
-//            }
             if ("ESP".equals(words[this.contador])) {
                 done = true;
             } else {
@@ -303,9 +314,6 @@ public class VistaWords extends javax.swing.JFrame {
 
     public String[] transformWords_ING(String[] words, int nWords) {
 
-        System.out.println("-------------------------------------------------------------------------------------------------------------");
-        System.out.println("CUANTO ES NWORD: " + nWords);
-        System.out.println("Y LO OTRO" + contador);
         int newTamanio = contador - nWords;
 
         System.out.println(newTamanio);
@@ -314,6 +322,7 @@ public class VistaWords extends javax.swing.JFrame {
         String[] array = new String[this.tamanio];
         boolean done = false;
         int j = 0;
+        this.totalING = this.tamanio;
 
         for (int a = contador; contador < words.length && done == false; a++) {
 

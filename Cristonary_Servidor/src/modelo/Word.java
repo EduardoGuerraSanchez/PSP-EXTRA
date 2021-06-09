@@ -74,7 +74,6 @@ public class Word extends ConexionBD {
                 word.setMultimedia(rs.getString("multimedia"));
                 word.setLogin(rs.getString("login"));
 
-
                 this.arrayWord.add(word);
             }
         } catch (SQLException ex) {

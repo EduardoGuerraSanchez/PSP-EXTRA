@@ -210,10 +210,10 @@ public class ProtocolController {
                     System.out.println("Mandamos tu descripcion");
                     description = this.arrayESP.get(contador).getDefinition_ESP();
                     this.i = contador;
-                    this.arrayESP.get(this.i).getMultimediaWord().initializeMultimedia(this.arrayWord.get(this.i).getMultimedia());//Añadimos la ruta
+                    this.arrayWord.get(this.i).getMultimediaWord().initializeMultimedia(this.arrayWord.get(this.i).getMultimedia());//Añadimos la ruta
                     System.out.println("NO ES EL PROTOCOLOESPPPPP,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, " + this.i);
 
-                    this.sizeMultimedia = this.arrayESP.get(this.i).getMultimediaWord().getMultimediaSize();
+                    this.sizeMultimedia = this.arrayWord.get(this.i).getMultimediaWord().getMultimediaSize();
                     this.type = this.arrayWord.get(i).getMultimedia().substring(this.arrayWord.get(i).getMultimedia().length() - 4, this.arrayWord.get(i).getMultimedia().length());
                 }
             }
@@ -229,16 +229,27 @@ public class ProtocolController {
                     System.out.println("Mandamos tu descripcion");
                     description = this.arrayING.get(contador).getDefinition_ING();
                     this.i = contador;
-                    this.arrayING.get(this.i).getMultimediaWord().initializeMultimedia(this.arrayWord.get(this.i).getMultimedia());//Añadimos la ruta
-                    System.out.println("NO ES EL PROTOCOLOESPPPPP,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, " + this.i);
-
-                    this.sizeMultimedia = this.arrayING.get(this.i).getMultimediaWord().getMultimediaSize();
-                    this.type = this.arrayWord.get(i).getMultimedia().substring(this.arrayWord.get(i).getMultimedia().length() - 4, this.arrayWord.get(i).getMultimedia().length());
                 }
             }
         }
 
         return description;
+    }
+
+    public void inizializarMultimedia(String pk) throws IOException {
+        boolean find = false;
+        for (int contador = 0; contador < arrayWord.size() && find == false; contador++) {
+            if (pk.equals(arrayWord.get(contador).getCod_word())) {
+                find = true;
+                this.i = contador;
+            }
+        }
+        arrayWord.get(this.i).getMultimediaWord().initializeMultimedia(arrayWord.get(this.i).getMultimedia());
+
+        this.sizeMultimedia = this.arrayWord.get(this.i).getMultimediaWord().getMultimediaSize();
+
+        this.type = this.arrayWord.get(i).getMultimedia().substring(this.arrayWord.get(i).getMultimedia().length() - 4, this.arrayWord.get(i).getMultimedia().length());
+
     }
 
     public String getNameFromSpecificWord(String pk, String languaje) throws SQLException {
@@ -249,7 +260,7 @@ public class ProtocolController {
         if ("ING".equals(languaje)) {
 
             for (int contador = 0; contador < this.arrayING.size() && done == false; contador++) {
-                
+
                 if (pk.equals(this.arrayING.get(contador).getCod_palabra())) {
                     name = this.arrayING.get(contador).getWord_ING();
                     done = true;
@@ -260,9 +271,9 @@ public class ProtocolController {
         }
 
         if ("ESP".equals(languaje)) {
-            
+
             for (int contador = 0; contador < this.arrayESP.size() && done == false; contador++) {
-                
+
                 if (pk.equals(this.arrayESP.get(contador).getCod_palabra())) {
                     name = this.arrayESP.get(contador).getWord_ESP();
                 }
@@ -328,4 +339,42 @@ public class ProtocolController {
         }
         return message;
     }
+
+    public String refreshWords() {
+
+        int total = arrayESP.size() + arrayING.size();
+
+        String messaje = "PROTOCOLCRISTOPOP1.0#REFRESH_WORDS#" + total + "#";
+        String aux = null;
+
+        for (int contador = 0; contador < arrayESP.size(); contador++) {
+
+            aux = arrayESP.get(contador).getCod_palabra() + "@" + arrayESP.get(contador).getWord_ESP() + "@" + arrayESP.get(contador).getDefinition_ESP();
+
+            if (contador != arrayESP.size() - 1) {
+                messaje = messaje + aux + "#";
+            } else {
+                messaje = messaje + aux;
+            }
+        }
+
+        messaje = messaje + "#";
+        messaje = messaje + "ESP" + "#";
+
+        for (int contador = 0; contador < arrayING.size(); contador++) {
+
+            aux = arrayING.get(contador).getCod_palabra() + "@" + arrayING.get(contador).getWord_ING() + "@" + arrayING.get(contador).getDefinition_ING();
+
+            if (contador != arrayING.size() - 1) {
+                messaje = messaje + aux + "#";
+            } else {
+                messaje = messaje + aux;
+            }
+        }
+        messaje = messaje + "#";
+        messaje = messaje + "ING";
+
+        return messaje;
+    }
+
 }

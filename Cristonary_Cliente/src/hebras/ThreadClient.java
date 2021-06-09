@@ -13,6 +13,7 @@ import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import map.TimeDate;
+import protocol.ClientProtocol;
 import vistas.VistaLogin;
 import vistas.VistaWords;
 import vistas.VistaWords_ESP;
@@ -39,9 +40,21 @@ public class ThreadClient implements Runnable {
     private int contadorFoto = 0;
     private boolean doneMultimedia;
     private TimeDate timedate;
+    
+    
+    
+    
+    
+//    private Socket socket = null;
+//    private Thread hebra;
+//    private PrintWriter out;
+//    private BufferedReader in;
+    private ClientProtocol clientProtocol;
 
     public ThreadClient(Socket socket) throws IOException {
         this.socket = socket;
+        this.out = new PrintWriter(socket.getOutputStream(), true);
+        this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.thread = new Thread(this);
     }
 
@@ -54,89 +67,99 @@ public class ThreadClient implements Runnable {
 
         try {
             vistaLogin = new VistaLogin();
+            clientProtocol = new ClientProtocol(this.socket,this.vistaLogin);
 
-            String inputLine = null;
-            String outputLine = null;
-
-            //CON EL OUT MANDO A ESCRIBIR
-            this.out = new PrintWriter(this.socket.getOutputStream(), true);
-            //CON EL IN LEO LO QUE ME HAN MANDADO
-            this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            String inputLine;
+            
             try {
+                
+                while(true){
                 while ((inputLine = in.readLine()) != null) {
-
-                    cadena = inputLine.split("#");
-                    System.out.println("CLIENTE");
-
-                    System.out.println(inputLine);
-
-                    if (cadena.length > 1) {
-                        switch (cadena[1]) {
-                            case "WELLCOME":
-                                System.out.println("ENTRAMOS EN EL WELLCOME");
-                                procesInput(inputLine);
-
-                                this.vistaLogin.setVisible(false);
-
-                                this.out.println("#GET_WORD");
-                                System.out.println("SALIMOS DEL WELLCOME");
-                                break;
-
-                            case "AVAIBLE_WORDS":
-                                System.out.println("ENTRAMOS EN AVAIBLE");
-                                VistaWords vistaWords = new VistaWords(this.socket, inputLine, this.login, this.token);
-
-                                vistaWords.setVisible(true);
-                                System.out.println("SALIMOS DE AVAIBLE");
-                                break;
-
-                            case "GET_SPECIFIC_WORD":
-                                System.out.println("ESTO CONTIENE: " + inputLine);
-                                this.cadena = inputLine.split("#");
-                                this.aux = inputLine.split("#");
-                                this.aux = inputLine.split("@");
-
-                                System.out.println("COMENSEMO A VE");
-                                System.out.println(this.cadena[0]);//PROTOCOLCRISTONARY1.0
-
-                                System.out.println(this.cadena[1]);//GET_SPECIFIC_WORD
-                                System.out.println(this.cadena[2]);//1@arbol@edeuve@Planta perenne, de tronco leñoso y elevado, que se ramifica a cierta altura del suelo.
-
-                                System.out.println(this.cadena[3]);//png
-                                this.format = cadena[3];
-                                System.out.println("A VER QUE CANTIDAD TIENE ESTO: " + this.cadena[4]);
-                                this.sizeMultimedia = Integer.parseInt(this.cadena[4]);
-                                System.out.println(this.cadena[5]);
-                                this.languaje = this.cadena[5];
-
-                                if ("ESP".equals(this.cadena[5])) {
-                                    this.vistaWords_ESP = new VistaWords_ESP(this.socket, this.cadena[2], this.login, this.token, this.cadena[3], Integer.parseInt(this.cadena[4]), this.aux[2], this);
-
-                                    this.vistaWords_ESP.setVisible(true);
-                                }
-
-                                if ("ING".equals(this.cadena[5])) {
-                                    this.vistaWords_ING = new VistaWords_ING(this.socket, this.cadena[2], this.login, this.token, this.cadena[3], Integer.parseInt(this.cadena[4]), this.aux[2], this);
-
-                                    this.vistaWords_ING.setVisible(true);
-                                }
-
-                                break;
-
-                            case "ADIOSXULO":
-                                System.out.println("AQUI NUNCA ENTRAMOS???");
-                                this.out.println("BYE");
-                                break;
-
-                            default:
-                                procesMultimedia(cadena,this.languaje);
-                        }
-                    }
+                    
+                    String[] cadena = inputLine.split("#");
+                    
+                    System.out.println("THREAD CLIENTE");
+                    
+                    System.out.println("EL THREAD CLIENTE CONTIENE: " + inputLine);
+                    
+                    this.clientProtocol.procesInput(inputLine, this.socket);
                 }
-                this.socket.close();
+            }
+//                while ((inputLine = in.readLine()) != null) {
+//
+//                    cadena = inputLine.split("#");
+//                    System.out.println("CLIENTE");
+//
+//                    System.out.println(inputLine);
+//
+//                    if (cadena.length > 1) {
+//                        switch (cadena[1]) {
+//                            case "WELLCOME":
+//                                System.out.println("ENTRAMOS EN EL WELLCOME");
+//                                procesInput(inputLine);
+//
+//                                this.vistaLogin.setVisible(false);
+//
+//                                this.out.println("#GET_WORD");
+//                                System.out.println("SALIMOS DEL WELLCOME");
+//                                break;
+//
+//                            case "AVAIBLE_WORDS":
+//                                System.out.println("ENTRAMOS EN AVAIBLE");
+//                                VistaWords vistaWords = new VistaWords(this.socket, inputLine, this.login, this.token);
+//
+//                                vistaWords.setVisible(true);
+//                                System.out.println("SALIMOS DE AVAIBLE");
+//                                break;
+//
+//                            case "GET_SPECIFIC_WORD":
+//                                System.out.println("ESTO CONTIENE: " + inputLine);
+//                                this.cadena = inputLine.split("#");
+//                                this.aux = inputLine.split("#");
+//                                this.aux = inputLine.split("@");
+//
+//                                System.out.println("COMENSEMO A VE");
+//                                System.out.println(this.cadena[0]);//PROTOCOLCRISTONARY1.0
+//
+//                                System.out.println(this.cadena[1]);//GET_SPECIFIC_WORD
+//                                System.out.println(this.cadena[2]);//1@arbol@edeuve@Planta perenne, de tronco leñoso y elevado, que se ramifica a cierta altura del suelo.
+//
+//                                System.out.println(this.cadena[3]);//png
+//                                this.format = cadena[3];
+//                                System.out.println("A VER QUE CANTIDAD TIENE ESTO: " + this.cadena[4]);
+//                                this.sizeMultimedia = Integer.parseInt(this.cadena[4]);
+//                                System.out.println(this.cadena[5]);
+//                                this.languaje = this.cadena[5];
+//
+//                                if ("ESP".equals(this.cadena[5])) {
+//                                    this.vistaWords_ESP = new VistaWords_ESP(this.socket, this.cadena[2], this.login, this.token, this.cadena[3], Integer.parseInt(this.cadena[4]), this.aux[2], this);
+//
+//                                    this.vistaWords_ESP.setVisible(true);
+//                                }
+//
+//                                if ("ING".equals(this.cadena[5])) {
+//                                    this.vistaWords_ING = new VistaWords_ING(this.socket, this.cadena[2], this.login, this.token, this.cadena[3], Integer.parseInt(this.cadena[4]), this.aux[2], this);
+//
+//                                    this.vistaWords_ING.setVisible(true);
+//                                }
+//
+//                                break;
+//
+//                            case "ADIOSXULO":
+//                                System.out.println("AQUI NUNCA ENTRAMOS???");
+//                                this.out.println("BYE");
+//                                break;
+//
+//                            default:
+//                                procesMultimedia(cadena,this.languaje);
+//                        }
+//                    }
+//                }
             } catch (IOException ex) {
                 Logger.getLogger(ThreadClient.class.getName()).log(Level.SEVERE, null, ex);
 
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ThreadClient.class.getName()).log(Level.SEVERE, null, ex);
             }
         } catch (IOException ex) {
             Logger.getLogger(ThreadClient.class.getName()).log(Level.SEVERE, null, ex);

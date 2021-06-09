@@ -1,11 +1,11 @@
 package vistas;
 
-import hebras.ThreadClient;
 import java.awt.Image;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import javax.swing.ImageIcon;
+import protocol.ClientProtocol;
 
 public class VistaWords_ING extends javax.swing.JFrame {
     
@@ -17,7 +17,7 @@ public class VistaWords_ING extends javax.swing.JFrame {
     private String cadena[];
     private String format;
     private int nBytes;
-    private ThreadClient threadClient;
+    private ClientProtocol clientProtocol;
     private String creator;
     private PrintWriter out;
 
@@ -25,9 +25,9 @@ public class VistaWords_ING extends javax.swing.JFrame {
         initComponents();
     }
     
-    public VistaWords_ING(Socket socket,String aux,String login,String key,String format,int nBytes,String creator,ThreadClient threadClient) throws IOException {
+    public VistaWords_ING(Socket socket,String aux,String login,String key,String format,int nBytes,String creator,ClientProtocol clientProtocol) throws IOException {
         initComponents();
-        this.threadClient = threadClient;
+        this.clientProtocol = clientProtocol;
         this.socket = socket;
         this.cadena = aux.split("@");
         this.cod_word = cadena[0];
@@ -36,9 +36,8 @@ public class VistaWords_ING extends javax.swing.JFrame {
         this.format = format;
         this.nBytes = nBytes;
         this.nameWord = this.cadena[1];
-        this.threadClient.setNameMultimedia(cod_word);
+        this.clientProtocol.setNameMultimedia(cod_word);
         this.creator = creator;
-        
         for(int contador = 0; contador < cadena.length;contador++){
             System.out.println("NUMERO: " + contador + " " + this.cadena[contador]);
         }

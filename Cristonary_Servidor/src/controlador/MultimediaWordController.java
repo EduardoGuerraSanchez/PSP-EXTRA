@@ -52,13 +52,13 @@ public class MultimediaWordController {
         array = wordsController.getTableWords();
 
         if ("ESP".equals(languaje)) {
-            for (int contador = 0; contador < arrayWord_ESP.size() && find == false; contador++) {
-                if (pk.equals(arrayWord_ESP.get(contador).getCod_palabra())) {
+            for (int contador = 0; contador < array.size() && find == false; contador++) {
+                if (pk.equals(array.get(contador).getCod_word())) {
                     find = true;
                     this.i = contador;
                 }
             }
-            arrayWord_ESP.get(this.i).getMultimediaWord().initializeMultimedia(array.get(this.i).getMultimedia());
+            array.get(this.i).getMultimediaWord().initializeMultimedia(array.get(this.i).getMultimedia());
             System.out.println("NO ES EL PROTOCOLO espppp,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, " + this.i);
 
             sendFragmentByte(this.i, languaje);
@@ -66,15 +66,13 @@ public class MultimediaWordController {
 
         if ("ING".equals(languaje)) {
             for (int contador = 0; contador < array.size() && find == false; contador++) {
-                if (pk.equals(this.array.get(contador).getCod_word())) {
+                if (pk.equals(array.get(contador).getCod_word())) {
                     find = true;
                     this.i = contador;
-                    System.out.println("VEAMOS CUANTO ES ESO: ");
-                    System.out.println(contador);
                 }
             }
             array.get(this.i).getMultimediaWord().initializeMultimedia(array.get(this.i).getMultimedia());
-            System.out.println("NO ES EL PROTOCOLO ING  ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, " + this.i);
+            System.out.println("NO ES EL PROTOCOLO ingggg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, " + this.i);
 
             sendFragmentByte(this.i, languaje);
         }
@@ -88,20 +86,20 @@ public class MultimediaWordController {
         String codificar;
 
         if ("ESP".equals(languaje)) {
-            while (totalSize < arrayWord_ESP.get(id).getMultimediaWord().getMultimediaSize()) {
+            while (totalSize < array.get(id).getMultimediaWord().getMultimediaSize()) {
 
-                arrayWord_ESP.get(id).getMultimediaWord().bytsMultimedia = new byte[size];
-                fragment = arrayWord_ESP.get(id).getMultimediaWord().dataIS.read(arrayWord_ESP.get(id).getMultimediaWord().bytsMultimedia, 0, 512);
+                array.get(id).getMultimediaWord().bytsMultimedia = new byte[size];
+                fragment = array.get(id).getMultimediaWord().dataIS.read(array.get(id).getMultimediaWord().bytsMultimedia, 0, 512);
 
                 totalSize += 512;
 
-                System.out.println(Arrays.toString(arrayWord_ESP.get(id).getMultimediaWord().bytsMultimedia));
+                System.out.println(Arrays.toString(array.get(id).getMultimediaWord().bytsMultimedia));
 
-                System.out.println("YA VAN: " + totalSize + "de: " + arrayWord_ESP.get(id).getMultimediaWord().getMultimediaSize());
+                System.out.println("YA VAN: " + totalSize + "de: " + array.get(id).getMultimediaWord().getMultimediaSize());
 
-                codificar = Base64.getEncoder().encodeToString(arrayWord_ESP.get(id).getMultimediaWord().bytsMultimedia);
+                codificar = Base64.getEncoder().encodeToString(array.get(id).getMultimediaWord().bytsMultimedia);
 
-                String message = "PROTOCOLOCRISTONARY1.0" + "#" + arrayWord_ESP.get(id).getCod_palabra() + "#" + size + "#" + codificar;
+                String message = "PROTOCOLOCRISTONARY1.0" + "#" + array.get(id).getCod_word() + "#" + size + "#" + codificar;
                 this.out.println(message);
             }
         }
@@ -120,6 +118,7 @@ public class MultimediaWordController {
 
                 codificar = Base64.getEncoder().encodeToString(array.get(id).getMultimediaWord().bytsMultimedia);
 
+                System.out.println(array.get(id).getCod_word());
                 String message = "PROTOCOLOCRISTONARY1.0" + "#" + array.get(id).getCod_word() + "#" + size + "#" + codificar;
                 this.out.println(message);
             }
