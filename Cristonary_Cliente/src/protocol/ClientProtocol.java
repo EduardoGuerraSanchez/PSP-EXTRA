@@ -45,6 +45,7 @@ public class ClientProtocol {
     private Timer timer;
     private int totalESP, totalING;
     private VistaWords vistaWords;
+    private String wordCreated_ESP, wordCreated_ING;
 
     public ClientProtocol(Socket socket, VistaLogin vistaLogin) throws FileNotFoundException, IOException {
         this.socket = socket;
@@ -69,10 +70,8 @@ public class ClientProtocol {
                 case "WELLCOME":
                     System.out.println("ENTRAMOS EN EL WELLCOME");
                     loginKey(messaje);
-//                    this.vistaLogin.setVisible(false);
                     this.vistaWords = new VistaWords(this.socket, this.cadena, this.login, this.token);
                     this.vistaWords.setVisible(true);
-//                    this.out.println("#GET_WORD");
                     System.out.println("SALIMOS DEL WELLCOME");
                     break;
 
@@ -92,12 +91,9 @@ public class ClientProtocol {
                     for (int contador = 0; contador < this.wordsING.length; contador++) {
                         System.out.println("LAS PALABRAS EN INGLES: " + this.wordsING[contador]);
                     }
-//                    update();
+                    update();
                     UpdateTable updateTable = new UpdateTable(this.socket, this.wordsESP, this.wordsING, this.vistaWords);
                     updateTable.thread.start();
-//                    this.totalESP = vistaWords.totalESP;
-//                    this.totalING = vistaWords.totalING;
-//                    System.out.println("QUE TAMAÑOS TIENEN: " + totalESP + " Y TAMBIEN: " + totalING);
                     System.out.println("SALIMOS DE AVAIBLE");
                     break;
 
@@ -136,42 +132,41 @@ public class ClientProtocol {
 
                 case "REFRESH_WORDS":
                     System.out.println("AMOS A RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRREFRESCAR");
-                    
-                    for(int contador = 0;contador < this.cadena.length;contador++){
+
+                    for (int contador = 0; contador < this.cadena.length; contador++) {
                         System.out.println(this.cadena[contador]);
                     }
-                    
+
                     transforWordsESP(this.cadena);
                     transforWordsING(this.cadena);
-                    
+
                     for (int contador = 0; contador < this.wordsESP.length; contador++) {
                         System.out.println("ESPAÑOL-->: " + this.wordsESP[contador]);
                     }
                     for (int contador = 0; contador < this.wordsING.length; contador++) {
                         System.out.println("INGLES-->: " + this.wordsING[contador]);
                     }
-                    UpdateTable updateTable2 = new UpdateTable(this.socket,this.wordsESP,this.wordsING,this.vistaWords);
+                    UpdateTable updateTable2 = new UpdateTable(this.socket, this.wordsESP, this.wordsING, this.vistaWords);
                     updateTable2.thread.start();
                     System.out.println("CONTINUAMOS...");
                     break;
-                    
+
                 case "WORD_CREATED_ESP":
-                    System.out.println("NOS DISPONEMOS A CREAR UNA PALABRA...");
+                    this.vistaWords.updateMessaje(this.cadena[3], this.cadena[5]);
                     this.totalESP++;
                     break;
-                    
+
                 case "WORD_CREATED_ING":
-                    System.out.println("AHORA IN INGLISHHHH");
+                    this.vistaWords.updateMessaje(this.cadena[3], this.cadena[5]);
+
                     this.totalING++;
                     break;
-                    
+
                 case "ADIOSXULO":
-                    System.out.println("AQUI NUNCA ENTRAMOS???");
                     this.out.println("BYE");
                     break;
 
                 default:
-                    System.out.println("QUE TIENE ESTO COMO PARA QUE ENTRES::::::::::::::::::::::::::::::::::::::::::::::::::::: " + this.cadena[1]);
                     procesMultimedia(cadena, this.languaje);
                     break;
             }
@@ -238,9 +233,9 @@ public class ClientProtocol {
 
     public void totalWords_ESP_ING() {
         boolean español = false;
-        
+
         System.out.println("¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡CUANTO TIENE ESTO EN TOTAL: " + this.cadena.length);
-        
+
         for (int contador = 3; contador < this.cadena.length; contador++) {
 
             if (español == false) {

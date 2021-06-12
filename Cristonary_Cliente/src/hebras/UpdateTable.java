@@ -53,16 +53,6 @@ public class UpdateTable implements Runnable {
         return arrayAux;
     }
 
-//    public String[][] updateTableWords_ESP() {
-//        String table[][] = new String[arrayESP.size()][1];
-//
-//        for (int contador = 0; contador < this.arrayESP.size(); contador++) {
-//            table[contador][0] = this.arrayESP.get(contador).getWord_ESP();
-//        }
-//
-//        return table;
-//    }
-
     public String[][] insertWordsTable_ESP() throws IOException, FileNotFoundException, ClassNotFoundException {
 
         String table[][] = new String[this.arrayESP.size()][1];
@@ -94,16 +84,6 @@ public class UpdateTable implements Runnable {
         return arrayAux;
     }
 
-    public String[][] updateTableWords_ING() {
-        String table[][] = new String[arrayING.size()][1];
-
-        for (int contador = 0; contador < this.arrayING.size(); contador++) {
-            table[contador][0] = this.arrayING.get(contador).getWord_ING();
-        }
-
-        return table;
-    }
-
     public String[][] insertWordsTable_ING() throws IOException, FileNotFoundException, ClassNotFoundException {
 
         String table[][] = new String[this.arrayING.size()][1];
@@ -119,8 +99,8 @@ public class UpdateTable implements Runnable {
 
         try {
             System.out.println("TOMALO NIÑOOOO");
-            this.vistaWords.setArrayWord_ESP(arrayESP);
-            this.vistaWords.setArrayWord_ING(arrayING);
+            this.vistaWords.setArrayWord_ESP(this.arrayESP);
+            this.vistaWords.setArrayWord_ING(this.arrayING);
             this.vistaWords.refreshTable_ESP(insertWordsTable_ESP());
             this.vistaWords.refreshTable_ING(insertWordsTable_ING());
             System.out.println("YA SE LO HA DAO");

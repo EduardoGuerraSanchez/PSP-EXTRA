@@ -229,11 +229,11 @@ public class ProtocolController {
                     System.out.println("Mandamos tu descripcion");
                     description = this.arrayESP.get(contador).getDefinition_ESP();
                     this.i = contador;
-                    this.arrayWord.get(this.i).getMultimediaWord().initializeMultimedia(this.arrayWord.get(this.i).getMultimedia());//Añadimos la ruta
-                    System.out.println("NO ES EL PROTOCOLOESPPPPP,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, " + this.i);
-
-                    this.sizeMultimedia = this.arrayWord.get(this.i).getMultimediaWord().getMultimediaSize();
-                    this.type = this.arrayWord.get(i).getMultimedia().substring(this.arrayWord.get(i).getMultimedia().length() - 4, this.arrayWord.get(i).getMultimedia().length());
+//                    this.arrayWord.get(this.i).getMultimediaWord().initializeMultimedia(this.arrayWord.get(this.i).getMultimedia());//Añadimos la ruta
+//                    System.out.println("NO ES EL PROTOCOLOESPPPPP,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, " + this.i);
+//
+//                    this.sizeMultimedia = this.arrayWord.get(this.i).getMultimediaWord().getMultimediaSize();
+//                    this.type = this.arrayWord.get(i).getMultimedia().substring(this.arrayWord.get(i).getMultimedia().length() - 4, this.arrayWord.get(i).getMultimedia().length());
                 }
             }
         }
