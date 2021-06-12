@@ -19,19 +19,19 @@ public class TimeDate extends TimerTask{
     }
     
      public String getDate(){
-        Date fecha = new Date();
+        Date date = new Date();
         SimpleDateFormat formatoFecha = new SimpleDateFormat("YYYY-MM-dd");
         
-        return formatoFecha.format(fecha);
+        return formatoFecha.format(date);
     }
     
     public String getTime(){
-        String tiempo;
+        String time;
         Calendar calendario = Calendar.getInstance();
         
-        tiempo = String.valueOf(calendario.get(Calendar.HOUR_OF_DAY) + ":" + calendario.get(Calendar.MINUTE));
+        time = String.valueOf(calendario.get(Calendar.HOUR_OF_DAY) + ":" + calendario.get(Calendar.MINUTE));
         
-        return tiempo;
+        return time;
     }
     
     public void refreshTable(){

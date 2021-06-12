@@ -13,6 +13,12 @@ public class Word_ING extends Word{
     public Word_ING(){
         arrayWord_ING = new ArrayList();
     }
+    
+    public Word_ING(String name,String definition,String cod) {
+        this.word_ING = name;
+        this.definition_ING = definition;
+        this.cod_palabra = cod;
+    }
 
     public String getWord_ING() {
         return word_ING;

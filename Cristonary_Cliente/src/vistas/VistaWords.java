@@ -6,45 +6,52 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import map.Word;
 import map.Word_ESP;
 import map.Word_ING;
 
 public class VistaWords extends javax.swing.JFrame {
 
     private Socket socket;
-    String mensaje;
-    String login;
-    String token;
+    private String[] mensaje;
+    private String login;
+    private String token;
     private ArrayList<Word_ESP> arrayWord_ESP;
     private ArrayList<Word_ING> arrayWord_ING;
     private String words[];
-    private String tabla[][];
-    private String tabla_ING[][];
     private PrintWriter out;
     private int contador;
     private int tamanio;
-    public int totalESP,totalING;
+    public int totalESP, totalING;
+    private VistaCreateWord_ESP vistaCreateWord_ESP;
+    private VistaCreateWord_ING vistaCreateWord_ING;
 
-    public VistaWords(Socket socket, String mensaje, String login, String token) throws IOException {
+    public VistaWords(Socket socket, String[] mensaje, String login, String token) throws IOException {
         initComponents();
+        System.out.println("AQUI NO ENTRAMOS O QUE????????????");
         this.socket = socket;
         this.mensaje = mensaje;
-        this.arrayWord_ESP = loadArray();
-        this.arrayWord_ING = loadArray_ING();
+
         this.login = login;
         this.token = token;
+        this.out = new PrintWriter(this.socket.getOutputStream(), true);
+
+        soliciteWords();
         System.out.println("aaaa");
         System.out.println(this.mensaje);
 
-        this.out = new PrintWriter(this.socket.getOutputStream(), true);
-
-        VistaWordsController vistaWordsController = new VistaWordsController(this.mensaje, this.arrayWord_ESP);
-        this.tabla = vistaWordsController.showTable();
-        tableWords.setModel(new javax.swing.table.DefaultTableModel(this.tabla, new String[]{"Nombre"}));
-
-        VistaWords_ING_Controller vistaWords_ING_Controller = new VistaWords_ING_Controller(this.mensaje, this.arrayWord_ING);
-        this.tabla_ING = vistaWords_ING_Controller.showTable();
-        tableWordsENGLISH.setModel(new javax.swing.table.DefaultTableModel(this.tabla_ING, new String[]{"Name"}));
+//        this.arrayWord_ESP = loadArray();
+//        this.arrayWord_ING = loadArray_ING();
+//
+//        VistaWordsController vistaWordsController = new VistaWordsController(this.mensaje, this.arrayWord_ESP);
+//        this.tabla = vistaWordsController.showTable();
+//        tableWords.setModel(new javax.swing.table.DefaultTableModel(this.tabla, new String[]{"Nombre"}));
+//
+//        VistaWords_ING_Controller vistaWords_ING_Controller = new VistaWords_ING_Controller(this.mensaje, this.arrayWord_ING);
+//        this.tabla_ING = vistaWords_ING_Controller.showTable();
+//        tableWordsENGLISH.setModel(new javax.swing.table.DefaultTableModel(this.tabla_ING, new String[]{"Name"}));
     }
 
     private VistaWords() {
@@ -66,8 +73,10 @@ public class VistaWords extends javax.swing.JFrame {
     public void setArrayWord_ING(ArrayList<Word_ING> arrayWord_ING) {
         this.arrayWord_ING = arrayWord_ING;
     }
-    
-    
+
+    public void soliciteWords() {
+        this.out.println("PROTOCOLOCRISTONARY1.0#GET_WORD#" + this.login + "#" + this.token);
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -83,6 +92,8 @@ public class VistaWords extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tableWordsENGLISH = new javax.swing.JTable();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -166,6 +177,20 @@ public class VistaWords extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tableWordsENGLISH);
 
+        jButton2.setText("Crear Palabra");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Create Word");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -186,8 +211,14 @@ public class VistaWords extends javax.swing.JFrame {
                         .addGap(20, 20, 20))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addGap(344, 344, 344)
+                .addComponent(jButton3)
+                .addGap(232, 232, 232))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(421, 421, 421)
                 .addComponent(jButton1)
-                .addGap(425, 425, 425))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,12 +228,16 @@ public class VistaWords extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(80, 80, 80)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
                 .addComponent(jButton1)
-                .addContainerGap(300, Short.MAX_VALUE))
+                .addGap(185, 185, 185))
         );
 
         pack();
@@ -213,7 +248,12 @@ public class VistaWords extends javax.swing.JFrame {
         ArrayList<Word_ESP> array = new ArrayList();
         String[] a;
 
-        this.words = this.mensaje.split("#");
+//        this.words = this.mensaje.split("#");
+
+        for (int contador = 0; contador < this.words.length; contador++) {
+            System.out.println(this.words[contador]);
+        }
+
         int totalWords = Integer.parseInt(this.words[2]);
         System.out.println(totalWords);
         this.words = transformWords(this.words, totalWords);
@@ -241,7 +281,7 @@ public class VistaWords extends javax.swing.JFrame {
         ArrayList<Word_ING> array = new ArrayList<Word_ING>();
         String[] a;
 
-        this.words = this.mensaje.split("#");
+//        this.words = this.mensaje.split("#");
         int totalWords = Integer.parseInt(this.words[2]);
 
         this.words = transformWords_ING(this.words, totalWords);
@@ -266,8 +306,6 @@ public class VistaWords extends javax.swing.JFrame {
 
         int row = tableWords.getSelectedRow();
 
-        System.out.println("AQUII: " + this.mensaje);
-
         this.out.println("PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + login + "#" + token + "#" + arrayWord_ESP.get(row).getCod_palabra() + "#" + "ESP");
     }//GEN-LAST:event_tableWordsMouseClicked
 
@@ -281,11 +319,28 @@ public class VistaWords extends javax.swing.JFrame {
 
         int row = tableWordsENGLISH.getSelectedRow();
 
-        System.out.println("AQUII: " + this.mensaje);
-
         this.out.println("PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + login + "#" + token + "#" + arrayWord_ING.get(row).getCod_palabra() + "#" + "ING");
     }//GEN-LAST:event_tableWordsENGLISHMouseClicked
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+            this.vistaCreateWord_ESP = new VistaCreateWord_ESP(this.socket,this.login);
+            this.vistaCreateWord_ESP.setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(VistaWords.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        try {
+            this.vistaCreateWord_ING = new VistaCreateWord_ING(this.socket,this.login);
+            this.vistaCreateWord_ING.setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(VistaWords.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    
     public String[] transformWords(String[] words, int nWords) {
 
         this.tamanio = nWords - 1;
@@ -347,8 +402,29 @@ public class VistaWords extends javax.swing.JFrame {
         return array;
     }
 
+    public void refreshTable_ESP(String tabla[][]) {
+        this.tableWords.setModel(new javax.swing.table.DefaultTableModel(
+                tabla,
+                new String[]{
+                    "Nombre"
+                }
+        ));
+    }
+
+    public void refreshTable_ING(String tabla[][]) {
+        this.tableWordsENGLISH.setModel(new javax.swing.table.DefaultTableModel(
+                tabla,
+                new String[]{
+                    "Name"
+                }
+        ));
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JDialog jDialog2;
     private javax.swing.JFrame jFrame1;

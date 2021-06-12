@@ -93,7 +93,7 @@ public class ThreadServer implements Runnable {
             this.out = new PrintWriter(this.socket.getOutputStream(), true);
             this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 
-            while ((inputLine = in.readLine()) != null) {
+            while ((inputLine = this.in.readLine()) != null) {
 
                 System.out.println("SERVIDOR");
 

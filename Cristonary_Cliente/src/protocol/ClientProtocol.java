@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Timer;
 import map.TimeDate;
@@ -34,11 +35,11 @@ public class ClientProtocol {
     private String[] wordsING;
     private VistaWords_ESP vistaWords_ESP;
     private VistaWords_ING vistaWords_ING;
-    File fich;
-    FileOutputStream salida;
+    private File fich;
+    private ArrayList<String> fragments;
+    private FileOutputStream salida;
     private String nameMultimedia, format;
     private int totalBytes, sizeMultimedia;
-    private int contadorFoto = 0;
     private boolean doneMultimedia;
     private TimeDate timedate;
     private Timer timer;
@@ -49,7 +50,7 @@ public class ClientProtocol {
         this.socket = socket;
         this.vistaLogin = vistaLogin;
         this.totalBytes = 0;
-        this.contadorFoto = 0;
+        this.fragments = new ArrayList<String>();
         this.timedate = new TimeDate(this.socket);
         this.timer = new Timer();
         this.out = new PrintWriter(socket.getOutputStream(), true);
@@ -68,21 +69,35 @@ public class ClientProtocol {
                 case "WELLCOME":
                     System.out.println("ENTRAMOS EN EL WELLCOME");
                     loginKey(messaje);
-                    this.vistaLogin.setVisible(false);
-                    this.out.println("#GET_WORD");
+//                    this.vistaLogin.setVisible(false);
+                    this.vistaWords = new VistaWords(this.socket, this.cadena, this.login, this.token);
+                    this.vistaWords.setVisible(true);
+//                    this.out.println("#GET_WORD");
                     System.out.println("SALIMOS DEL WELLCOME");
                     break;
 
                 case "AVAIBLE_WORDS":
                     System.out.println("ENTRAMOS EN AVAIBLE");
-                    this.vistaWords = new VistaWords(this.socket, messaje, this.login, this.token);
+                    for (int contador = 0; contador < this.cadena.length; contador++) {
+                        System.out.println("A VER QUE TAL QUEDA: " + this.cadena[contador]);
+                    }
+                    totalWords_ESP_ING();
+                    System.out.println("EL ESPAÑOL: " + totalESP);
+                    System.out.println("ingles: " + totalING);
+                    transforWordsESP(this.cadena);
+                    transforWordsING(this.cadena);
+                    for (int contador = 0; contador < this.wordsESP.length; contador++) {
+                        System.out.println("LAS PALABRAS EN ESPAÑOL: " + this.wordsESP[contador]);
+                    }
+                    for (int contador = 0; contador < this.wordsING.length; contador++) {
+                        System.out.println("LAS PALABRAS EN INGLES: " + this.wordsING[contador]);
+                    }
 //                    update();
-                    this.vistaWords.setVisible(true);
-                    
-                    this.totalESP = vistaWords.totalESP;
-                    
-                    this.totalING = vistaWords.totalING;
-                    System.out.println("QUE TAMAÑOS TIENEN: " + totalESP + " Y TAMBIEN: " + totalING);
+                    UpdateTable updateTable = new UpdateTable(this.socket, this.wordsESP, this.wordsING, this.vistaWords);
+                    updateTable.thread.start();
+//                    this.totalESP = vistaWords.totalESP;
+//                    this.totalING = vistaWords.totalING;
+//                    System.out.println("QUE TAMAÑOS TIENEN: " + totalESP + " Y TAMBIEN: " + totalING);
                     System.out.println("SALIMOS DE AVAIBLE");
                     break;
 
@@ -121,26 +136,44 @@ public class ClientProtocol {
 
                 case "REFRESH_WORDS":
                     System.out.println("AMOS A RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRREFRESCAR");
+                    
+                    for(int contador = 0;contador < this.cadena.length;contador++){
+                        System.out.println(this.cadena[contador]);
+                    }
+                    
                     transforWordsESP(this.cadena);
                     transforWordsING(this.cadena);
-
+                    
                     for (int contador = 0; contador < this.wordsESP.length; contador++) {
                         System.out.println("ESPAÑOL-->: " + this.wordsESP[contador]);
                     }
                     for (int contador = 0; contador < this.wordsING.length; contador++) {
                         System.out.println("INGLES-->: " + this.wordsING[contador]);
                     }
-                    System.out.println("alalalala");
+                    UpdateTable updateTable2 = new UpdateTable(this.socket,this.wordsESP,this.wordsING,this.vistaWords);
+                    updateTable2.thread.start();
+                    System.out.println("CONTINUAMOS...");
+                    break;
                     
-                    UpdateTable updateTable = new UpdateTable(this.socket, this.wordsESP, this.wordsING, this.vistaWords);
-                    updateTable.thread.start();
+                case "WORD_CREATED_ESP":
+                    System.out.println("NOS DISPONEMOS A CREAR UNA PALABRA...");
+                    this.totalESP++;
+                    break;
+                    
+                case "WORD_CREATED_ING":
+                    System.out.println("AHORA IN INGLISHHHH");
+                    this.totalING++;
+                    break;
+                    
                 case "ADIOSXULO":
                     System.out.println("AQUI NUNCA ENTRAMOS???");
                     this.out.println("BYE");
                     break;
 
                 default:
+                    System.out.println("QUE TIENE ESTO COMO PARA QUE ENTRES::::::::::::::::::::::::::::::::::::::::::::::::::::: " + this.cadena[1]);
                     procesMultimedia(cadena, this.languaje);
+                    break;
             }
         }
     }
@@ -157,13 +190,13 @@ public class ClientProtocol {
         System.out.println(nameMultimedia + format);
 
         if (this.doneMultimedia == false) {
-            fich = new File(nameMultimedia + format);
-            salida = new FileOutputStream(fich);
+            this.fich = new File(this.nameMultimedia + this.format);
+            this.salida = new FileOutputStream(this.fich);
             this.doneMultimedia = true;
         }
 
         byte[] fragment = Base64.getDecoder().decode(this.cadena[3]);
-        salida.write(fragment);
+        this.salida.write(fragment);
 
         this.totalBytes += 512;
         System.out.println(sizeMultimedia);
@@ -199,33 +232,60 @@ public class ClientProtocol {
     }
 
     public void update() {
-        int tiempo = 15;
+        int tiempo = 10;
         this.timer.scheduleAtFixedRate(timedate, 0, 1000 * tiempo);
+    }
+
+    public void totalWords_ESP_ING() {
+        boolean español = false;
+        
+        System.out.println("¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡CUANTO TIENE ESTO EN TOTAL: " + this.cadena.length);
+        
+        for (int contador = 3; contador < this.cadena.length; contador++) {
+
+            if (español == false) {
+                if ("ESP".equals(this.cadena[contador])) {
+                    System.out.println("IF ESPAÑOL");
+                    español = true;
+                } else {
+                    System.out.println("ELSE ESPAÑOL");
+                    this.totalESP++;
+                }
+            }
+
+            if (español == true) {
+                if ("ING".equals(this.cadena[contador]) || "ESP".equals(this.cadena[contador])) {
+                    System.out.println("IF ING");
+                } else {
+                    System.out.println("ELSE ING");
+                    this.totalING++;
+                }
+            }
+        }
     }
 
     public void transforWordsESP(String[] words) {
 
         this.wordsESP = new String[this.totalESP];
-        System.out.println("ALO POLICHIA");
+        System.out.println("ALO POLICHIA_ESP");
+        System.out.println(this.totalESP);
         int j = 0;
         boolean done = false;
         for (int i = 3; i < words.length && done == false; i++) {
             if ("ESP".equals(words[i])) {
                 done = true;
             } else {
+                System.out.println("ESTO POR UN LADO; " + words[i]);
                 this.wordsESP[j] = words[i];
-                System.out.println("LE PALABRAS: " + words[i]);
-                System.out.println("KLK: " + this.wordsESP[j]);
                 j++;
             }
-
         }
     }
 
     public void transforWordsING(String[] words) {
 
         this.wordsING = new String[this.totalING];
-        System.out.println("ALO POLICHIA");
+        System.out.println("ALO POLICHIA_ING");
         int j = 0;
         boolean done = false;
         boolean english = false;
@@ -234,17 +294,22 @@ public class ClientProtocol {
                 done = true;
 
             } else {
-                if(english == true){
+                if (english == true) {
                     this.wordsING[j] = words[i];
-                    System.out.println("LE PALABRAS IN INGLISH: " + words[i]);
-                    System.out.println("KLK: " + this.wordsING[j]);
                     j++;
                 }
                 if ("ESP".equals(words[i])) {
                     english = true;
                 }
-                
             }
         }
+    }
+
+    public ArrayList<String> getFragments() {
+        return fragments;
+    }
+
+    public void setFragments(ArrayList<String> fragments) {
+        this.fragments = fragments;
     }
 }

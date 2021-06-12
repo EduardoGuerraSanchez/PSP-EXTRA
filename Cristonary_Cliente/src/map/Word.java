@@ -12,7 +12,16 @@ public class Word {
     public Word() {
         arrayWord = new ArrayList();
     }
+    
+    public Word(String multimedia,String login){
+        this.multimedia = multimedia;
+        this.login = login;
+    }
 
+    public Word(String login){
+        this.login = login;
+    }
+    
     public String getMultimedia() {
         return multimedia;
     }

@@ -4,19 +4,29 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 public class Word extends ConexionBD {
-    
+
     private String cod_word;
     private String multimedia;
     private String login;
     private MultimediaWord multimediaWord;
     private ArrayList arrayWord;
-    
+
     public Word() throws IOException {
         multimediaWord = new MultimediaWord();
         arrayWord = new ArrayList();
+    }
+
+    public Word(String multimedia, String login) {
+        this.multimedia = multimedia;
+        this.login = login;
+    }
+
+    public Word(String login) {
+        this.login = login;
     }
 
     public String getMultimedia() {
@@ -50,11 +60,19 @@ public class Word extends ConexionBD {
     public void setMultimediaWord(MultimediaWord multimediaWord) {
         this.multimediaWord = multimediaWord;
     }
+
+    public ArrayList getArrayWord() {
+        return arrayWord;
+    }
+
+    public void setArrayWord(ArrayList arrayWord) {
+        this.arrayWord = arrayWord;
+    }
     
     public ArrayList getWordBD() throws SQLException, IOException {
 
         this.abrirConexion();
-        
+
         String query = "SELECT * FROM palabra";
 
         Statement stmt = null;
@@ -87,7 +105,49 @@ public class Word extends ConexionBD {
 
         return arrayWord;
     }
-    
-    
-    
+
+    public void createWord(String multimedia, String login) throws SQLException {
+
+        this.abrirConexion();
+
+        PreparedStatement ps;
+
+        String query = "INSERT INTO palabra(multimedia,login) VALUES (?,?)";
+
+        try {
+            ps = this.conn.prepareStatement(query);
+            ps.setString(1, multimedia);
+            ps.setString(2, login);
+            ps.executeUpdate();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+
+        } finally {
+            this.cerrarConexion();
+        }
+    }
+
+    public void deleteWord(String cod) throws SQLException {
+
+        PreparedStatement ps;
+
+        String query = "DELETE FROM palabra WHERE cod=?";
+
+        this.abrirConexion();
+
+        try {
+            ps = this.conn.prepareStatement(query);
+
+            ps.setString(1, cod);
+
+            ps.executeUpdate();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+
+        } finally {
+            this.cerrarConexion();
+        }
+    }
 }

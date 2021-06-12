@@ -18,14 +18,15 @@ public class Protocol {
     private final String PREPARED_TO_RECEIVE = "PREPARED_TO_RECEIVE";
     private final String REFRESH = "REFRESH";
     private final String BYE = "BYE";
+    private final String CREATE_WORD_ESP = "CREATE_WORD_ESP";
+    private final String CREATE_WORD_ING = "CREATE_WORD_ING";
     private ProtocolController protocolController;
     private MultimediaWordController multimediaWordController;
     private String[] cadena;
     private String login;
     private String token;
-    
 
-    public Protocol(Socket socket,ArrayList array) throws IOException, SQLException {
+    public Protocol(Socket socket, ArrayList array) throws IOException, SQLException {
         protocolController = new ProtocolController(array);
         multimediaWordController = new MultimediaWordController(socket);
     }
@@ -45,8 +46,6 @@ public class Protocol {
     public void setToken(String token) {
         this.token = token;
     }
-    
-    
 
     public String processInput(String theInput) throws SQLException, IOException {
 
@@ -58,7 +57,10 @@ public class Protocol {
                 theOutput = this.protocolController.OK(theOutput);
                 this.cadena = theOutput.split(SIGN);
                 this.login = this.cadena[2];
+
                 theOutput = this.protocolController.insertSecretWord(theOutput);
+                this.token = this.protocolController.getToken();
+
             } else {
                 theOutput = this.protocolController.ERROR(theOutput);
             }
@@ -87,33 +89,59 @@ public class Protocol {
             System.out.println(this.cadena[5]);//ESP / ING
 
             this.protocolController.inizializarMultimedia(this.cadena[4]);
-            definition = this.protocolController.get_specific_definition(this.cadena[4],this.cadena[5]);
-            name = this.protocolController.getNameFromSpecificWord(this.cadena[4],this.cadena[5]);
+            definition = this.protocolController.get_specific_definition(this.cadena[4], this.cadena[5]);
+            name = this.protocolController.getNameFromSpecificWord(this.cadena[4], this.cadena[5]);
             tamanio = this.protocolController.getSizeMultimedia();
             type = this.protocolController.getType();
             creator = this.protocolController.getCreator(this.cadena[4]);
-            
+
             theOutput = "PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + cadena[4] + "@" + name + "@" + creator + "@" + definition + "#" + type + "#" + tamanio + "#" + this.cadena[5];
         }
 
         if (theInput.contains(PREPARED_TO_RECEIVE)) {
             System.out.println(cadena[4]);
-            multimediaWordController.sendMultimedia(cadena[4],this.cadena[5]);
+            multimediaWordController.sendMultimedia(cadena[4], this.cadena[5]);
         }
-        
-        if(theInput.contains(REFRESH)){
+
+        if (theInput.contains(REFRESH)) {
             System.out.println("onrrRRRRRREFFFFFFRRREEESSSCAAAR");
             theOutput = this.protocolController.refreshWords();
             System.out.println(theOutput);
         }
-        
-        if(theInput.contains(BYE)){
+
+        if (theInput.contains(CREATE_WORD_ESP)) {
+            System.out.println("ENGA LOCO AMOS A CREAR UNA PALABRA");
+            System.out.println(theInput);
+            cadena = theInput.split(SIGN);
+            System.out.println(this.cadena[0]);//PROTOCOLCRISTONARY1.0
+            System.out.println(this.cadena[1]);//CREATE_WORD_ESP
+            System.out.println(this.cadena[2]);//nombrePalabra
+            System.out.println(this.cadena[3]);//descripcion
+            System.out.println(this.cadena[4]);//edeuve
+            System.out.println(this.cadena[5]);//ESP
+
+            theOutput = this.protocolController.createWord_ESP(this.cadena[2], this.cadena[3], this.cadena[4]);
+        }
+
+        if (theInput.contains(CREATE_WORD_ING)) {
+            System.out.println("ENGA LOCO AMOS A CREAR UNA PALABRA EN INGLES");
+            System.out.println(theInput);
+            cadena = theInput.split(SIGN);
+            System.out.println(this.cadena[0]);//PROTOCOLCRISTONARY1.0
+            System.out.println(this.cadena[1]);//CREATE_WORD_ESP
+            System.out.println(this.cadena[2]);//nombrePalabra
+            System.out.println(this.cadena[3]);//descripcion
+            System.out.println(this.cadena[4]);//edeuve
+            System.out.println(this.cadena[5]);//ING
+
+            theOutput = this.protocolController.createWord_ING(this.cadena[2], this.cadena[3], this.cadena[4]);
+        }
+
+        if (theInput.contains(BYE)) {
             System.out.println("OLE OLE OLE QUE ESTAMOS OUT");
             theOutput = protocolController.deleteUser(this.login, this.token);
         }
-        
-        
-        
+
         System.out.println("EL SERVIDOR PROTOCOLO VA A DEVOLVER: " + theOutput);
         return theOutput;
     }

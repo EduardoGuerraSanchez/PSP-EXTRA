@@ -12,6 +12,17 @@ public class Word_ESP extends Word{
     public Word_ESP() {
         arrayWord_ESP = new ArrayList();
     }
+    
+    public Word_ESP(String name,String definition,String cod) {
+        this.word_ESP = name;
+        this.definition_ESP = definition;
+        this.cod_palabra = cod;
+    }
+    
+    public Word_ESP(String name,String definition) {
+        this.word_ESP = name;
+        this.definition_ESP = definition;
+    }
 
     public String getWord_ESP() {
         return word_ESP;

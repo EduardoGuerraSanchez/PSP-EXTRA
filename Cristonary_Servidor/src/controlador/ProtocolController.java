@@ -26,22 +26,30 @@ public class ProtocolController {
     private ArrayList<Word_ESP> arrayESP;
     private ArrayList<Word_ING> arrayING;
     private ArrayList<ThreadServer> arrayThread;
+    private String token;
+    private Word word;
+    private Word_ESP word_ESP;
+    private Word_ING word_ING;
+
+    WordsController wordsController;
+    Words_ESP_Controller words_ESP_Controller;
+    Words_ING_Controller words_ING_Controller;
 
     public ProtocolController(ArrayList<ThreadServer> array) throws SQLException, IOException {
 
-        WordsController wordsController = new WordsController();
-
+        this.wordsController = new WordsController();
         this.arrayWord = wordsController.getTableWords();
 
-        Words_ESP_Controller words_ESP_Controller = new Words_ESP_Controller();
-
+        this.words_ESP_Controller = new Words_ESP_Controller();
         this.arrayESP = words_ESP_Controller.getTableWords_ESP();
 
-        Words_ING_Controller words_ING_Controller = new Words_ING_Controller();
-
+        this.words_ING_Controller = new Words_ING_Controller();
         this.arrayING = words_ING_Controller.getTableWords_ING();
 
         this.arrayThread = array;
+    }
+
+    public ProtocolController() throws SQLException, IOException {
     }
 
     public String getLoginProtocol() {
@@ -100,6 +108,10 @@ public class ProtocolController {
         this.arrayESP = arrayESP;
     }
 
+    public String getToken() {
+        return this.token;
+    }
+
     public boolean checkUser() throws SQLException, IOException {
 
         UserController userController = new UserController();
@@ -144,6 +156,8 @@ public class ProtocolController {
 
         n = String.valueOf(random.nextInt());
 
+        this.token = n;
+
         return n;
 
     }
@@ -183,7 +197,12 @@ public class ProtocolController {
 
             a = this.arrayING.get(contador).getCod_palabra() + "@" + this.arrayING.get(contador).getWord_ING() + "@" + this.arrayING.get(contador).getDefinition_ING();
 
-            protocol = protocol + a;
+            if (contador != this.arrayING.size() - 1) {
+                System.out.println("AQUI ENTRA??");
+                protocol = protocol + a + "#";
+            } else {
+                protocol = protocol + a;
+            }
 
         }
         protocol = protocol + "#" + "ING";
@@ -265,11 +284,8 @@ public class ProtocolController {
                     name = this.arrayING.get(contador).getWord_ING();
                     done = true;
                 }
-
             }
-
         }
-
         if ("ESP".equals(languaje)) {
 
             for (int contador = 0; contador < this.arrayESP.size() && done == false; contador++) {
@@ -340,12 +356,16 @@ public class ProtocolController {
         return message;
     }
 
-    public String refreshWords() {
+    public String refreshWords() throws SQLException {
 
         int total = arrayESP.size() + arrayING.size();
+        System.out.println("NOS DISPONEMOS A REALISZAR EL METODO PARA REFRESCAR EN EL SERVIDOR");
 
         String messaje = "PROTOCOLCRISTOPOP1.0#REFRESH_WORDS#" + total + "#";
         String aux = null;
+        
+        this.arrayESP = this.words_ESP_Controller.getTableWords_ESP();
+        this.arrayING = this.words_ING_Controller.getTableWords_ING();
 
         for (int contador = 0; contador < arrayESP.size(); contador++) {
 
@@ -377,4 +397,66 @@ public class ProtocolController {
         return messaje;
     }
 
+    public String createRoute(String nombre, String login) {
+
+        String route = null;
+
+        route = "C:/Users/eduar/Desktop/cristonary/" + login + "/" + nombre + "/" + nombre + ".png";
+
+        return route;
+    }
+
+    public synchronized String createWord_ESP(String nombre, String description, String login) throws IOException, SQLException {
+
+        String route = createRoute(nombre, login);
+        String cod = null;
+        String message = null;
+
+        this.word = new Word();
+        this.word.createWord(route, login);
+        WordsController wordsController = new WordsController();
+
+        this.arrayWord = wordsController.getTableWords();
+
+        for (int contador = 0; contador < this.arrayWord.size(); contador++) {
+            System.out.println("ESTO TIENE: " + this.arrayWord.get(contador).getCod_word());
+            if (contador == this.arrayWord.size() - 1) {
+                cod = this.arrayWord.get(contador).getCod_word();
+            }
+        }
+
+        this.word_ESP = new Word_ESP();
+        this.word_ESP.createWord_ESP(nombre, description, Integer.valueOf(cod));
+
+        message = "PROTOCOLCRISTONARY1.0#WORD_CREATED_ESP#" + "#" + nombre + "#" + description + "#" + login;
+
+        return message;
+    }
+
+    public synchronized String createWord_ING(String nombre, String description, String login) throws IOException, SQLException {
+
+        String route = createRoute(nombre, login);
+        String cod = null;
+        String message = null;
+
+        this.word = new Word();
+        this.word.createWord(route, login);
+        wordsController = new WordsController();
+
+        this.arrayWord = wordsController.getTableWords();
+
+        for (int contador = 0; contador < this.arrayWord.size(); contador++) {
+            System.out.println("ESTO TIENE: " + this.arrayWord.get(contador).getCod_word());
+            if (contador == this.arrayWord.size() - 1) {
+                cod = this.arrayWord.get(contador).getCod_word();
+            }
+        }
+
+        this.word_ING = new Word_ING();
+        this.word_ING.createWord_ING(nombre, description, Integer.valueOf(cod));
+
+        message = "PROTOCOLCRISTONARY1.0#WORD_CREATED_ING#" + "#" + nombre + "#" + description + "#" + login;
+
+        return message;
+    }
 }

@@ -1,7 +1,11 @@
 package hebras;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import map.Word_ESP;
 import map.Word_ING;
 import vistas.VistaWords;
@@ -35,6 +39,7 @@ public class UpdateTable implements Runnable {
         for (int i = 0; i < message_ESP.length; i++) {
 
             cadenaAux = this.message_ESP[i].split("@");
+            
             Word_ESP word_ESP = new Word_ESP();
 
             word_ESP.setCod_palabra(cadenaAux[0]);
@@ -48,13 +53,23 @@ public class UpdateTable implements Runnable {
         return arrayAux;
     }
 
-    public String[][] updateTableWords_ESP() {
-        String table[][] = new String[arrayESP.size()][1];
+//    public String[][] updateTableWords_ESP() {
+//        String table[][] = new String[arrayESP.size()][1];
+//
+//        for (int contador = 0; contador < this.arrayESP.size(); contador++) {
+//            table[contador][0] = this.arrayESP.get(contador).getWord_ESP();
+//        }
+//
+//        return table;
+//    }
+
+    public String[][] insertWordsTable_ESP() throws IOException, FileNotFoundException, ClassNotFoundException {
+
+        String table[][] = new String[this.arrayESP.size()][1];
 
         for (int contador = 0; contador < this.arrayESP.size(); contador++) {
             table[contador][0] = this.arrayESP.get(contador).getWord_ESP();
         }
-
         return table;
     }
 
@@ -89,12 +104,32 @@ public class UpdateTable implements Runnable {
         return table;
     }
 
+    public String[][] insertWordsTable_ING() throws IOException, FileNotFoundException, ClassNotFoundException {
+
+        String table[][] = new String[this.arrayING.size()][1];
+
+        for (int contador = 0; contador < this.arrayING.size(); contador++) {
+            table[contador][0] = this.arrayING.get(contador).getWord_ING();
+        }
+        return table;
+    }
+
     @Override
     public void run() {
 
-        this.vistaWords.setArrayWord_ESP(arrayESP);
+        try {
+            System.out.println("TOMALO NIÑOOOO");
+            this.vistaWords.setArrayWord_ESP(arrayESP);
+            this.vistaWords.setArrayWord_ING(arrayING);
+            this.vistaWords.refreshTable_ESP(insertWordsTable_ESP());
+            this.vistaWords.refreshTable_ING(insertWordsTable_ING());
+            System.out.println("YA SE LO HA DAO");
 
-        this.vistaWords.setArrayWord_ING(arrayING);
+        } catch (IOException ex) {
+            Logger.getLogger(UpdateTable.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UpdateTable.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 

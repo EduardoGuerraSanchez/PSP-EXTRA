@@ -1,5 +1,6 @@
 package modelo;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,6 +15,12 @@ public class Word_ESP extends Word{
     
     public Word_ESP() {
         arrayWord_ESP = new ArrayList();
+    }
+    
+    public Word_ESP(String name,String definition,String cod) {
+        this.word_ESP = name;
+        this.definition_ESP = definition;
+        this.cod_palabra = cod;
     }
 
     public String getWord_ESP() {
@@ -79,9 +86,41 @@ public class Word_ESP extends Word{
         return arrayWord_ESP;
     }
 
+    public ArrayList getArrayWord_ESP() {
+        return arrayWord_ESP;
+    }
+
+    public void setArrayWord_ESP(ArrayList arrayWord_ESP) {
+        this.arrayWord_ESP = arrayWord_ESP;
+    }
+    
+    public void createWord_ESP(String nombre,String description, int cod) throws SQLException {
+
+        this.abrirConexion();
+
+        PreparedStatement ps;
+
+        String query = "INSERT INTO palabra_esp VALUES (?,?,?)";
+
+        try {
+            ps = this.conn.prepareStatement(query);
+            ps.setString(1, nombre);
+            ps.setString(2, description);
+            ps.setInt(3, cod);
+            ps.executeUpdate();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+
+        } finally {
+            this.cerrarConexion();
+        }
+    }
+
     @Override
     public String toString() {
         return "Word_ESP{" + "word_ESP=" + word_ESP + ", definition_ESP=" + definition_ESP + ", cod_palabra=" + cod_palabra + '}';
     }
+    
     
 }

@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author eduar
- */
 public class VistaServer extends javax.swing.JFrame {
 
     private int port = 4444;
