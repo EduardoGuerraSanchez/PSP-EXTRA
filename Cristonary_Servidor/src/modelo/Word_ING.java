@@ -108,20 +108,21 @@ public class Word_ING extends Word {
         }
     }
 
-    public void deleteWord_ING(int cod) throws SQLException {
+    public void deleteWord_ING(String cod) throws SQLException{
+        
         PreparedStatement ps;
-
+        
         String query = "DELETE FROM palabra_ing WHERE cod_palabra=?";
-
+        
         this.abrirConexion();
-
-        try {
+        
+        try{
             ps = this.conn.prepareStatement(query);
-
-            ps.setInt(1, cod);
-
+            
+            ps.setString(1, cod);
+            
             ps.executeUpdate();
-
+            
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
 
@@ -134,5 +135,4 @@ public class Word_ING extends Word {
     public String toString() {
         return "Word_ING{" + "word_ING=" + word_ING + ", definition_ING=" + definition_ING + ", cod_palabra=" + cod_palabra + '}';
     }
-
 }

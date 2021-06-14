@@ -116,11 +116,31 @@ public class Word_ESP extends Word{
             this.cerrarConexion();
         }
     }
+    public void deleteWord_ESP(String cod) throws SQLException{
+        
+        PreparedStatement ps;
+        
+        String query = "DELETE FROM palabra_esp WHERE cod_word=?";
+        
+        this.abrirConexion();
+        
+        try{
+            ps = this.conn.prepareStatement(query);
+            
+            ps.setString(1, cod);
+            
+            ps.executeUpdate();
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+
+        } finally {
+            this.cerrarConexion();
+        }
+    }
 
     @Override
     public String toString() {
         return "Word_ESP{" + "word_ESP=" + word_ESP + ", definition_ESP=" + definition_ESP + ", cod_palabra=" + cod_palabra + '}';
     }
-    
-    
 }

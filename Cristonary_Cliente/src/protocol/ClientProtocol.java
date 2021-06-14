@@ -162,6 +162,24 @@ public class ClientProtocol {
                     this.totalING++;
                     break;
 
+                case "DELETE_WORD_ESP":
+                    for(int contador = 0;contador < this.cadena.length;contador++){
+                        System.out.println("TO ESTO TIENE: " + this.cadena[contador]);
+                    }
+                    this.vistaWords.uptadeMessajeDelete(this.cadena[3], this.cadena[4]);
+                    this.totalESP--;
+                    System.out.println("ENGA, PUES AMOS A ELIMINARLA");
+                    break;
+
+                case "DELETE_WORD_ING":
+                    for(int contador = 0;contador < this.cadena.length;contador++){
+                        System.out.println("TO ESTO TIENE: " + this.cadena[contador]);
+                    }
+                    this.vistaWords.uptadeMessajeDelete(this.cadena[3], this.cadena[4]);
+                    this.totalING--;
+                    System.out.println("ENGA, PUES AMOS A ELIMINARLA");
+                    break;
+
                 case "ADIOSXULO":
                     this.out.println("BYE");
                     break;

@@ -35,6 +35,10 @@ public class UpdateTable implements Runnable {
         String[] cadenaAux;
 
         ArrayList<Word_ESP> arrayAux = new ArrayList<>();
+        
+        for(int contador = 0;contador < message_ESP.length;contador++){
+            System.out.println("ESTO LO CONTIENE EL MENSAJE EN ESPAÑOL " +message_ESP[contador]);
+        }
 
         for (int i = 0; i < message_ESP.length; i++) {
 
@@ -56,6 +60,10 @@ public class UpdateTable implements Runnable {
     public String[][] insertWordsTable_ESP() throws IOException, FileNotFoundException, ClassNotFoundException {
 
         String table[][] = new String[this.arrayESP.size()][1];
+        
+        for (int contador = 0; contador < this.arrayESP.size(); contador++) {
+            System.out.println("CONFOME INSERTAMOS EN LA TABLA: " + this.arrayESP.get(contador).getWord_ESP());
+        }
 
         for (int contador = 0; contador < this.arrayESP.size(); contador++) {
             table[contador][0] = this.arrayESP.get(contador).getWord_ESP();

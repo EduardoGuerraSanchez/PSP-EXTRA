@@ -128,26 +128,28 @@ public class Word extends ConexionBD {
         }
     }
 
-    public void deleteWord(String cod) throws SQLException {
-
+    public void deleteWord(String cod) throws SQLException{
+        
         PreparedStatement ps;
-
-        String query = "DELETE FROM palabra WHERE cod=?";
-
+        
+        String query = "DELETE FROM palabra WHERE cod_palabra=?";
+        
         this.abrirConexion();
-
-        try {
+        
+        try{
             ps = this.conn.prepareStatement(query);
-
+            
             ps.setString(1, cod);
-
+            
             ps.executeUpdate();
-
+            
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
 
         } finally {
             this.cerrarConexion();
         }
+        
     }
+    
 }

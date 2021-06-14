@@ -1,5 +1,6 @@
 package controlador;
 
+import vista.MessajeThread;
 import hebras.ThreadServer;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -131,6 +132,9 @@ public class ProtocolController {
             }
 
         }
+
+        MessajeThread messajeThread = new MessajeThread("El usuario: " + this.loginCheck + " se ha conectado");
+        messajeThread.getText().start();
         return exist;
     }
 
@@ -210,6 +214,9 @@ public class ProtocolController {
         System.out.println("COMO QUEDA: " + a);
         System.out.println(this.arrayING.size());
         System.out.println(protocol);
+
+        MessajeThread messajeThread = new MessajeThread(protocol);
+        messajeThread.getText().start();
 
         return protocol;
     }
@@ -297,6 +304,9 @@ public class ProtocolController {
 
         }
 
+        MessajeThread messajeThread = new MessajeThread("Se ha solicitado la palabra: " + name);
+        messajeThread.getText().start();
+
         return name;
     }
 
@@ -315,9 +325,7 @@ public class ProtocolController {
                 a = this.arrayWord.get(contador).getLogin();
                 done = true;
             }
-
         }
-
         System.out.println("TAMBIEN ESTO: " + a);
 
         return a;
@@ -363,7 +371,7 @@ public class ProtocolController {
 
         String messaje = "PROTOCOLCRISTOPOP1.0#REFRESH_WORDS#" + total + "#";
         String aux = null;
-        
+
         this.arrayESP = this.words_ESP_Controller.getTableWords_ESP();
         this.arrayING = this.words_ING_Controller.getTableWords_ING();
 
@@ -414,7 +422,7 @@ public class ProtocolController {
 
         this.word = new Word();
         this.word.createWord(route, login);
-        WordsController wordsController = new WordsController();
+        wordsController = new WordsController();
 
         this.arrayWord = wordsController.getTableWords();
 
@@ -456,6 +464,34 @@ public class ProtocolController {
         this.word_ING.createWord_ING(nombre, description, Integer.valueOf(cod));
 
         message = "PROTOCOLCRISTONARY1.0#WORD_CREATED_ING#" + "#" + nombre + "#" + description + "#" + login;
+
+        return message;
+    }
+
+    public synchronized String deleteWord_ESP(String cod,String nombre,String login) throws IOException, SQLException {
+
+        String message = null;
+        System.out.println("EL CODIGO DE ESTO ES:" + cod);
+        this.word_ESP = new Word_ESP();
+        this.word_ESP.deleteWord_ESP(cod);
+        this.word = new Word();
+        this.word.deleteWord(cod);
+        
+        message = "PROTOCOLCRISTONARY1.0#DELETE_WORD_ESP#" + cod + "#" + nombre + "#" + login;
+
+        return message;
+    }
+    
+    public synchronized String deleteWord_ING(String cod,String nombre,String login) throws IOException, SQLException {
+
+        String message = null;
+        System.out.println("EL CODIGO DE ESTO ES:" + cod);
+        this.word_ING = new Word_ING();
+        this.word_ING.deleteWord_ING(cod);
+        this.word = new Word();
+        this.word.deleteWord(cod);
+        
+        message = "PROTOCOLCRISTONARY1.0#DELETE_WORD_ING#" + cod + "#" + nombre + "#" + login;
 
         return message;
     }

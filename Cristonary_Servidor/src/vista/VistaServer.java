@@ -45,6 +45,8 @@ public class VistaServer extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         textPort = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        textMessaje = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -66,6 +68,10 @@ public class VistaServer extends javax.swing.JFrame {
 
         jLabel2.setText("Port");
 
+        textMessaje.setColumns(20);
+        textMessaje.setRows(5);
+        jScrollPane1.setViewportView(textMessaje);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -75,18 +81,21 @@ public class VistaServer extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton2)
-                            .addComponent(buttonON))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(textPort)
+                            .addComponent(textIp, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(textPort, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                            .addComponent(textIp))
-                        .addGap(155, 155, 155))))
+                            .addComponent(buttonON)
+                            .addComponent(jRadioButton2))
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -103,7 +112,9 @@ public class VistaServer extends javax.swing.JFrame {
                 .addComponent(buttonON)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jRadioButton2)
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         pack();
@@ -119,6 +130,10 @@ public class VistaServer extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
+    public static void insertText(String messaje){
+        textMessaje.append(messaje);
+    }
+    
 //    public void openServer() throws IOException {
 //
 //        listening = true;
@@ -174,7 +189,9 @@ public class VistaServer extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField textIp;
+    private static javax.swing.JTextArea textMessaje;
     private javax.swing.JTextField textPort;
     // End of variables declaration//GEN-END:variables
 }

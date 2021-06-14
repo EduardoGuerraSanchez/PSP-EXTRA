@@ -20,6 +20,9 @@ public class Protocol {
     private final String BYE = "BYE";
     private final String CREATE_WORD_ESP = "CREATE_WORD_ESP";
     private final String CREATE_WORD_ING = "CREATE_WORD_ING";
+    
+    private final String DELETE_WORD_ESP = "DELETE_WORD_ESP";
+    private final String DELETE_WORD_ING = "DELETE_WORD_ING";
     private ProtocolController protocolController;
     private MultimediaWordController multimediaWordController;
     private String[] cadena;
@@ -51,6 +54,7 @@ public class Protocol {
 
         String theOutput = null;
         this.protocolController.setLoginProtocol(theInput);
+        cadena = theInput.split(SIGN);
 
         if (theInput.contains(PROTOCOL + SIGN + LOGIN)) {
             if (this.protocolController.checkUser() == true) {
@@ -79,7 +83,7 @@ public class Protocol {
             String definition = null;
 
             System.out.println("ESTO VA A SER: " + theInput);
-            cadena = theInput.split(SIGN);
+//            cadena = theInput.split(SIGN);
             System.out.println(this.cadena[0]);//PROTOCOLCRISTONARY1.0
             System.out.println(this.cadena[1]);//GET_SPECIFIC_WORD
             System.out.println(this.cadena[2]);//edeuve
@@ -95,12 +99,12 @@ public class Protocol {
             type = this.protocolController.getType();
             creator = this.protocolController.getCreator(this.cadena[4]);
 
-            theOutput = "PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + cadena[4] + "@" + name + "@" + creator + "@" + definition + "#" + type + "#" + tamanio + "#" + this.cadena[5];
+            theOutput = "PROTOCOLCRISTONARY1.0#GET_SPECIFIC_WORD#" + this.cadena[4] + "@" + name + "@" + creator + "@" + definition + "#" + type + "#" + tamanio + "#" + this.cadena[5];
         }
 
         if (theInput.contains(PREPARED_TO_RECEIVE)) {
             System.out.println(cadena[4]);
-            multimediaWordController.sendMultimedia(cadena[4], this.cadena[5]);
+            multimediaWordController.sendMultimedia(this.cadena[4], this.cadena[5]);
         }
 
         if (theInput.contains(REFRESH)) {
@@ -112,7 +116,7 @@ public class Protocol {
         if (theInput.contains(CREATE_WORD_ESP)) {
             System.out.println("ENGA LOCO AMOS A CREAR UNA PALABRA");
             System.out.println(theInput);
-            cadena = theInput.split(SIGN);
+//            cadena = theInput.split(SIGN);
             System.out.println(this.cadena[0]);//PROTOCOLCRISTONARY1.0
             System.out.println(this.cadena[1]);//CREATE_WORD_ESP
             System.out.println(this.cadena[2]);//nombrePalabra
@@ -126,7 +130,7 @@ public class Protocol {
         if (theInput.contains(CREATE_WORD_ING)) {
             System.out.println("ENGA LOCO AMOS A CREAR UNA PALABRA EN INGLES");
             System.out.println(theInput);
-            cadena = theInput.split(SIGN);
+//            cadena = theInput.split(SIGN);
             System.out.println(this.cadena[0]);//PROTOCOLCRISTONARY1.0
             System.out.println(this.cadena[1]);//CREATE_WORD_ESP
             System.out.println(this.cadena[2]);//nombrePalabra
@@ -135,6 +139,24 @@ public class Protocol {
             System.out.println(this.cadena[5]);//ING
 
             theOutput = this.protocolController.createWord_ING(this.cadena[2], this.cadena[3], this.cadena[4]);
+        }
+
+        if (theInput.contains(DELETE_WORD_ESP)) {
+
+            for (int contador = 0; contador < this.cadena.length; contador++) {
+                System.out.println("ESTA ES LA CADENA: " + this.cadena[contador]);
+            }
+            System.out.println("PUESSSSS AAAAA QUI ESTAMOSS");
+            theOutput = this.protocolController.deleteWord_ESP(this.cadena[2],this.cadena[3],this.cadena[4]);
+        }
+        
+        if (theInput.contains(DELETE_WORD_ING)) {
+
+            for (int contador = 0; contador < this.cadena.length; contador++) {
+                System.out.println("ESTA ES LA CADENA: " + this.cadena[contador]);
+            }
+            System.out.println("PUESSSSS AAAAA QUI ESTAMOSS");
+            theOutput = this.protocolController.deleteWord_ING(this.cadena[2],this.cadena[3],this.cadena[4]);
         }
 
         if (theInput.contains(BYE)) {

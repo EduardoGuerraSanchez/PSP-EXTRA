@@ -2,6 +2,7 @@ package vistas;
 
 import controller.VistaWordsController;
 import controller.VistaWords_ING_Controller;
+import java.awt.TextArea;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -95,6 +96,10 @@ public class VistaWords extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         textMessage = new java.awt.TextArea();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        textoEliminar = new javax.swing.JTextField();
+        textDelete = new javax.swing.JTextField();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -192,16 +197,24 @@ public class VistaWords extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setText("Eliminar Palabra");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton5.setText("Delete Word");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(173, 173, 173)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3)
-                .addGap(149, 149, 149))
             .addGroup(layout.createSequentialGroup()
                 .addGap(52, 52, 52)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -221,7 +234,22 @@ public class VistaWords extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(121, 121, 121)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton2)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton4)
+                                .addGap(41, 41, 41)
+                                .addComponent(textoEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(112, 112, 112)
+                                .addComponent(jButton5)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(textDelete))
+                        .addGap(149, 149, 149))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -238,7 +266,13 @@ public class VistaWords extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton4)
+                    .addComponent(jButton5)
+                    .addComponent(textoEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(textMessage, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -248,64 +282,60 @@ public class VistaWords extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public ArrayList<Word_ESP> loadArray() {
-
-        ArrayList<Word_ESP> array = new ArrayList();
-        String[] a;
-
-//        this.words = this.mensaje.split("#");
-
-        for (int contador = 0; contador < this.words.length; contador++) {
-            System.out.println(this.words[contador]);
-        }
-
-        int totalWords = Integer.parseInt(this.words[2]);
-        System.out.println(totalWords);
-        this.words = transformWords(this.words, totalWords);
-        System.out.println("VAMOS A DEMOSTRAR QUE...");
-        for (int contador = 0; contador < this.words.length; contador++) {
-            System.out.println(this.words[contador]);
-        }
-
-        for (int contador = 0; contador < this.words.length; contador++) {
-            Word_ESP word_ESP = new Word_ESP();
-
-            a = this.words[contador].split("@");
-            word_ESP.setCod_palabra(a[0]);
-            word_ESP.setWord_ESP(a[1]);
-            word_ESP.setDefinition_ESP(a[2]);
-            array.add(word_ESP);
-            System.out.println(array.get(contador));
-        }
-
-        return array;
-    }
-
-    public ArrayList<Word_ING> loadArray_ING() {
-
-        ArrayList<Word_ING> array = new ArrayList<Word_ING>();
-        String[] a;
-
-//        this.words = this.mensaje.split("#");
-        int totalWords = Integer.parseInt(this.words[2]);
-
-        this.words = transformWords_ING(this.words, totalWords);
-
-        for (int contador = 0; contador < words.length; contador++) {
-            System.out.println(this.words[contador]);
-        }
-
-        for (int contador = 0; contador < this.words.length; contador++) {
-            Word_ING word_ING = new Word_ING();
-
-            a = this.words[contador].split("@");
-            word_ING.setCod_palabra(a[0]);
-            word_ING.setWord_ING(a[1]);
-            word_ING.setDefinition_ING(a[2]);
-            array.add(word_ING);
-        }
-        return array;
-    }
+//    public ArrayList<Word_ESP> loadArray() {
+//
+//        ArrayList<Word_ESP> array = new ArrayList();
+//        String[] a;
+// 
+//        for (int contador = 0; contador < this.words.length; contador++) {
+//            System.out.println(this.words[contador]);
+//        }
+//
+//        int totalWords = Integer.parseInt(this.words[2]);
+//        System.out.println(totalWords);
+//        this.words = transformWords(this.words, totalWords);
+//        System.out.println("VAMOS A DEMOSTRAR QUE...");
+//        for (int contador = 0; contador < this.words.length; contador++) {
+//            System.out.println(this.words[contador]);
+//        }
+//
+//        for (int contador = 0; contador < this.words.length; contador++) {
+//            Word_ESP word_ESP = new Word_ESP();
+//
+//            a = this.words[contador].split("@");
+//            word_ESP.setCod_palabra(a[0]);
+//            word_ESP.setWord_ESP(a[1]);
+//            word_ESP.setDefinition_ESP(a[2]);
+//            array.add(word_ESP);
+//            System.out.println(array.get(contador));
+//        }
+//
+//        return array;
+//    }
+//    public ArrayList<Word_ING> loadArray_ING() {
+//
+//        ArrayList<Word_ING> array = new ArrayList<Word_ING>();
+//        String[] a;
+//
+//        int totalWords = Integer.parseInt(this.words[2]);
+//
+//        this.words = transformWords_ING(this.words, totalWords);
+//
+//        for (int contador = 0; contador < words.length; contador++) {
+//            System.out.println(this.words[contador]);
+//        }
+//
+//        for (int contador = 0; contador < this.words.length; contador++) {
+//            Word_ING word_ING = new Word_ING();
+//
+//            a = this.words[contador].split("@");
+//            word_ING.setCod_palabra(a[0]);
+//            word_ING.setWord_ING(a[1]);
+//            word_ING.setDefinition_ING(a[2]);
+//            array.add(word_ING);
+//        }
+//        return array;
+//    }
 
     private void tableWordsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableWordsMouseClicked
 
@@ -329,7 +359,7 @@ public class VistaWords extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try {
-            this.vistaCreateWord_ESP = new VistaCreateWord_ESP(this.socket,this.login);
+            this.vistaCreateWord_ESP = new VistaCreateWord_ESP(this.socket, this.login);
             this.vistaCreateWord_ESP.setVisible(true);
         } catch (IOException ex) {
             Logger.getLogger(VistaWords.class.getName()).log(Level.SEVERE, null, ex);
@@ -338,14 +368,46 @@ public class VistaWords extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         try {
-            this.vistaCreateWord_ING = new VistaCreateWord_ING(this.socket,this.login);
+            this.vistaCreateWord_ING = new VistaCreateWord_ING(this.socket, this.login);
             this.vistaCreateWord_ING.setVisible(true);
         } catch (IOException ex) {
             Logger.getLogger(VistaWords.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+
+        String nombre = this.textoEliminar.getText();
+        boolean existe = false;
+        System.out.println("AQUI ENTRAMOS??");
+        System.out.println(nombre);
+        int i = 0;
+        for (i = 0; contador < this.arrayWord_ESP.size() && existe == false; i++) {
+            System.out.println("Esto es lo tuyo " + this.arrayWord_ESP.get(i).getWord_ESP());
+            if (nombre.equals(this.arrayWord_ESP.get(i).getWord_ESP())) {
+
+                System.out.println("DISELO OLE OLEOEE: " + this.arrayWord_ESP.get(i).getCod_palabra());
+                existe = true;
+                System.out.println("ESTO ES LO QUE MANDA: " + this.arrayWord_ESP.get(i).getCod_palabra());
+                this.out.println("PROTOCOLCRISTONARY1.0#DELETE_WORD_ESP#" + this.arrayWord_ESP.get(i).getCod_palabra() + "#" + this.arrayWord_ESP.get(i).getWord_ESP() + "#" + this.login + "#" + "ESP");
+            }
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        String nombre = this.textDelete.getText();
+        boolean existe = false;
+        System.out.println("AQUI ENTRAMOS??");
+        System.out.println(nombre);
+        int i = 0;
+        for (i = 0; contador < this.arrayWord_ING.size() && existe == false; i++) {
+            if (nombre.equals(this.arrayWord_ING.get(i).getWord_ING())) {
+                existe = true;
+                this.out.println("PROTOCOLCRISTONARY1.0#DELETE_WORD_ING#" + this.arrayWord_ING.get(i).getCod_palabra() + "#" + this.arrayWord_ING.get(i).getWord_ING() + "#" + this.login + "#" + "ING");
+            }
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
+
     public String[] transformWords(String[] words, int nWords) {
 
         this.tamanio = nWords - 1;
@@ -424,9 +486,14 @@ public class VistaWords extends javax.swing.JFrame {
                 }
         ));
     }
-    
-    public void updateMessaje(String broadcast,String login){
-        this.textMessage.append("La palabra: " + broadcast + " ha sido introducida por el usuario: " + login);
+
+    public void updateMessaje(String mensaje, String login) {
+        this.textMessage.append("\nLa palabra: " + mensaje + " ha sido introducida por el usuario: " + login);
+    }
+
+    public void uptadeMessajeDelete(String mensaje, String login) {
+        this.textMessage.append("\nLa palabra: " + mensaje + " ha sido eliminada por el usuario: " + login);
+
     }
 
 
@@ -434,6 +501,8 @@ public class VistaWords extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JDialog jDialog2;
     private javax.swing.JFrame jFrame1;
@@ -443,7 +512,9 @@ public class VistaWords extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tableWords;
     private javax.swing.JTable tableWordsENGLISH;
+    private javax.swing.JTextField textDelete;
     private java.awt.TextArea textMessage;
+    private javax.swing.JTextField textoEliminar;
     // End of variables declaration//GEN-END:variables
 
 }
