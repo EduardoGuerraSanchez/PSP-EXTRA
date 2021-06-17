@@ -9,8 +9,7 @@ import java.util.logging.Logger;
 
 public class VistaLogin extends javax.swing.JFrame {
 
-    private final String IP = "192.168.0.13"
-            + "";//casa 0.13 telefono 43.51
+    private final String IP = "192.168.43.51" + "";//casa 0.13 telefono 43.51
     private int port = 4444;
     private Socket socket;
     private PrintWriter out;
